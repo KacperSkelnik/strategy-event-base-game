@@ -14,13 +14,12 @@
 void Game::handleEvent(const std::optional<sf::Event>& event) {
     using namespace Scene;
 
+    const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
+
     // Close window: exit
     if (event->is<sf::Event::Closed>()) Window::get().close();
 
     if (event->is<sf::Event::MouseButtonPressed>()) {
-
-        const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
-
         if (isButtonPressed(sf::Mouse::Button::Left)) {
             if (Window::isMouseOnMainView(mousePosition)) {
                 constexpr float radius     = 10;
@@ -28,7 +27,7 @@ void Game::handleEvent(const std::optional<sf::Event>& event) {
 
                 sf::CircleShape shape(radius);
                 shape.setPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
-                shape.setFillColor(sf::Color::Green);
+                shape.setFillColor(selectedBuilding.value_or(sf::Color::Transparent));
 
                 sf::CircleShape ring(ringRadius);
                 ring.setPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
@@ -41,8 +40,16 @@ void Game::handleEvent(const std::optional<sf::Event>& event) {
             }
 
             if (Window::isMouseOnBottomView(mousePosition)) {
-                std::cout << mousePosition.x << ", " << mousePosition.y << std::endl;
+                if (const std::optional<sf::Color> selected = buildingSelector.getSelected()) {
+                    selectedBuilding = selected;
+                }
             }
+        }
+    }
+
+    if (const auto e = event->getIf<sf::Event::MouseWheelScrolled>()) {
+        if (Window::isMouseOnBottomView(mousePosition) && e->wheel == sf::Mouse::Wheel::Vertical) {
+            buildingSelector.scroll(e->delta);
         }
     }
 }
@@ -69,6 +76,9 @@ Game::Game() {
 
     auto [width, _] = Window::getMainView().getSize();
     grid            = Grid(32, 32, width / 32);
+
+    std::array colors = {sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Cyan};
+    buildingSelector  = BuildingSelector(colors);
 }
 
 Game::~Game() {

@@ -7,26 +7,24 @@
 #include "../globals/Scene.h"
 #include <iostream>
 
-unsigned Grid::getGridColumn(
-    const float posX,
-    const float cellSize
-) const {
+unsigned Grid::getGridColumn(const float posX, const float cellSize) const {
     return static_cast<unsigned>(std::min(posX / cellSize, static_cast<float>(cols) - 1));
 }
 
-unsigned Grid::getGridRow(
-    const float posY,
-    const float cellSize
-) const {
+unsigned Grid::getGridRow(const float posY, const float cellSize) const {
     return static_cast<unsigned>(std::min(posY / cellSize, static_cast<float>(rows) - 1));
 }
 
-sf::Vector2f Grid::getCellCenter(
-    const unsigned row,
-    const unsigned col,
-    const float    cellSize
-) {
+sf::Vector2f Grid::getCellCenter(const unsigned row, const unsigned col, const float cellSize) {
     return {static_cast<float>(col) * cellSize + cellSize / 2, static_cast<float>(row) * cellSize + cellSize / 2};
+}
+
+Grid::Grid(const int rows, const int cols, const float cellSize): rows(rows), cols(cols), cellSize(cellSize) {
+    line.setFillColor(sf::Color::White);
+    selectedCell.setSize(sf::Vector2f(cellSize, cellSize));
+    selectedCell.setFillColor(sf::Color::Transparent);
+    selectedCell.setOutlineColor(sf::Color::White);
+    selectedCell.setOutlineThickness(2);
 }
 
 void Grid::draw() {

@@ -9,8 +9,9 @@
 
 class Game {
   private:
-    Grid             grid             = Grid(0, 0, 0);
-    BuildingSelector buildingSelector = BuildingSelector();
+    Grid                     grid;
+    BuildingSelector         buildingSelector;
+    std::optional<sf::Color> selectedBuilding;
 
     void handleEvent(const std::optional<sf::Event>& event);
     void draw();

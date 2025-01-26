@@ -10,12 +10,12 @@ namespace Scene {
 
     static Window* s_instance = nullptr;
 
-    bool Window::isMouseOn(
-        const sf::Vector2i& mousePosition,
-        const sf::View&     view
-    ) {
-        const auto [x, y]          = view.getViewport().position;
-        const auto [width, height] = view.getSize();
+    bool Window::isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view) {
+        const auto [centerX, centerY] = view.getCenter();
+        const auto [width, height]    = view.getSize();
+        const float x                 = centerX - width / 2;
+        const float y                 = centerY - height / 2;
+
         if (x < static_cast<float>(mousePosition.x) && x + width > static_cast<float>(mousePosition.x) &&
             y < static_cast<float>(mousePosition.y) && y + height > static_cast<float>(mousePosition.y)) {
             return true;
@@ -23,10 +23,7 @@ namespace Scene {
         return false;
     }
 
-    void Window::init(
-        const unsigned initialWidth,
-        const unsigned initialHeight
-    ) {
+    void Window::init(const unsigned initialWidth, const unsigned initialHeight) {
         assert(!s_instance);
 
         const unsigned width  = initialWidth;

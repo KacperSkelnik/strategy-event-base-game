@@ -6,8 +6,9 @@
 
 #include "../globals/Scene.h"
 #include "SFML/Graphics/RectangleShape.hpp"
+#include <iostream>
 
-void BuildingSelector::draw() {
+BuildingSelector::BuildingSelector(const std::span<sf::Color>& inputElements) {
     using namespace Scene;
 
     const auto [centerX, centerY] = Window::getBottomView().getCenter();
@@ -15,29 +16,57 @@ void BuildingSelector::draw() {
     const float basePositionX     = centerX - width / 2;
     const float basePositionY     = centerY - height / 2;
 
-    sf::RectangleShape green;
-    green.setSize({100, 100});
-    green.setFillColor(sf::Color::Green);
-    green.setPosition({basePositionX + 50, basePositionY + 50});
+    const float elementSize = 0.7f * height;
+    const float space       = 0.15f * height;
 
-    sf::RectangleShape red;
-    red.setSize({100, 100});
-    red.setFillColor(sf::Color::Red);
-    red.setPosition({basePositionX + 250, basePositionY + 50});
+    elements.reserve(inputElements.size());
+    float shift = space;
+    for (const sf::Color color : inputElements) {
+        sf::RectangleShape rect;
+        rect.setSize({elementSize, elementSize});
+        rect.setFillColor(color);
+        rect.setPosition({basePositionX + shift, basePositionY + space});
+        elements.emplace_back(rect);
+        shift += (elementSize + space);
+    }
+    rightBorder = shift;
+}
 
-    sf::RectangleShape yellow;
-    yellow.setSize({100, 100});
-    yellow.setFillColor(sf::Color::Yellow);
-    yellow.setPosition({basePositionX + 450, basePositionY + 50});
-
-    sf::RectangleShape white;
-    white.setSize({100, 100});
-    white.setFillColor(sf::Color::White);
-    white.setPosition({basePositionX + 650, basePositionY + 50});
+void BuildingSelector::draw() const {
+    using namespace Scene;
 
     Window::bottomViewFocus();
-    Window::get().draw(green);
-    Window::get().draw(red);
-    Window::get().draw(yellow);
-    Window::get().draw(white);
+    for (const sf::RectangleShape& element : elements) {
+        Window::get().draw(element);
+    }
+}
+
+std::optional<sf::Color> BuildingSelector::getSelected() const {
+    using namespace Scene;
+
+    const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
+    const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
+
+    for (const sf::RectangleShape& element : elements) {
+        if (element.getGlobalBounds().contains(worldPosition)) {
+            return element.getFillColor();
+        }
+    }
+    return std::nullopt;
+}
+
+void BuildingSelector::scroll(const float delta) const {
+    using namespace Scene;
+
+    const float offset  = -4 * delta;
+    const float centerX = Window::getBottomView().getCenter().x;
+    const float width   = Window::getBottomView().getSize().x;
+
+    if (centerX - width / 2 + offset > 0 && centerX + width / 2 + offset < rightBorder) {
+        Window::getBottomView().move({offset, 0});
+    } else if (centerX - width / 2 + offset < 0) {
+        Window::getBottomView().move({-(centerX - width / 2), 0});
+    } else if (centerX + width / 2 + offset > rightBorder) {
+        Window::getBottomView().move({rightBorder - (centerX + width / 2), 0});
+    }
 }

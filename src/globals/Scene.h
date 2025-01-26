@@ -14,18 +14,12 @@ namespace Scene {
         sf::View         mainView;
         sf::View         bottomView;
 
-        static bool isMouseOn(
-            const sf::Vector2i& mousePosition,
-            const sf::View&     view
-        );
+        static bool isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view);
 
       public:
         Window()  = default;
         ~Window() = default;
-        static void init(
-            unsigned initialWidth,
-            unsigned initialHeight
-        );
+        static void              init(unsigned initialWidth, unsigned initialHeight);
         static void              shutDown();
         static sf::RenderWindow& get();
         static sf::View&         getMainView();

@@ -25,7 +25,7 @@ BreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 BreakTemplateDeclarations: No
 BinPackArguments: false
-BinPackParameters: AlwaysOnePerLine
+BinPackParameters: OnePerLine
 BreakBeforeBraces: Attach
 BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: false
