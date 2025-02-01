@@ -5,16 +5,19 @@
 #include "Scene.h"
 
 #include <cassert>
+#include <iostream>
 
 namespace Scene {
 
     static Window* s_instance = nullptr;
 
     bool Window::isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view) {
-        const auto [centerX, centerY] = view.getCenter();
-        const auto [width, height]    = view.getSize();
-        const float x                 = centerX - width / 2;
-        const float y                 = centerY - height / 2;
+        const auto [xStart, yStart]            = view.getViewport().position;
+        const auto [windowWidth, windowHeight] = get().getSize();
+        const auto [width, height]             = view.getSize();
+
+        const float x = static_cast<float>(windowWidth) * xStart;
+        const float y = static_cast<float>(windowHeight) * yStart;
 
         if (x < static_cast<float>(mousePosition.x) && x + width > static_cast<float>(mousePosition.x) &&
             y < static_cast<float>(mousePosition.y) && y + height > static_cast<float>(mousePosition.y)) {

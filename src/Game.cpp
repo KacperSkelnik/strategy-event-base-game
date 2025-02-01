@@ -11,46 +11,53 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-void Game::handleEvent(const std::optional<sf::Event>& event) {
+void Game::onClose() {
     using namespace Scene;
 
-    const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
+    Window::get().close();
+}
 
-    // Close window: exit
-    if (event->is<sf::Event::Closed>()) Window::get().close();
+void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
+    using namespace Scene;
 
-    if (event->is<sf::Event::MouseButtonPressed>()) {
-        if (isButtonPressed(sf::Mouse::Button::Left)) {
-            if (Window::isMouseOnMainView(mousePosition)) {
-                constexpr float radius     = 10;
-                constexpr float ringRadius = 100;
+    std::cout << event->position.x << " " << event->position.y << std::endl;
 
-                sf::CircleShape shape(radius);
-                shape.setPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
-                shape.setFillColor(selectedBuilding.value_or(sf::Color::Transparent));
-
-                sf::CircleShape ring(ringRadius);
-                ring.setPosition({static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)});
-                ring.setFillColor(sf::Color::Transparent);
-                ring.setOutlineThickness(2.f);
-                ring.setOutlineColor(sf::Color::Red);
-
-                grid.addObject(std::make_unique<sf::CircleShape>(shape));
-                grid.addObject(std::make_unique<sf::CircleShape>(ring));
+    if (event->button == sf::Mouse::Button::Left) {
+        if (Window::isMouseOnMainView(event->position)) {
+            if (selectedBuilding) {
+                Building building(selectedBuilding.value(), grid.getCellSize(), event->position);
+                grid.addBuilding(std::make_unique<Building>(building));
             }
+        }
 
-            if (Window::isMouseOnBottomView(mousePosition)) {
-                if (const std::optional<sf::Color> selected = buildingSelector.getSelected()) {
-                    selectedBuilding = selected;
-                }
+        if (Window::isMouseOnBottomView(event->position)) {
+            if (const std::optional<BuildingType> selected = buildingSelector.getSelected()) {
+                selectedBuilding = selected;
             }
         }
     }
+}
 
-    if (const auto e = event->getIf<sf::Event::MouseWheelScrolled>()) {
-        if (Window::isMouseOnBottomView(mousePosition) && e->wheel == sf::Mouse::Wheel::Vertical) {
-            buildingSelector.scroll(e->delta);
-        }
+void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
+    using namespace Scene;
+
+    if (Window::isMouseOnBottomView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
+        buildingSelector.scroll(event->delta);
+    }
+}
+
+void Game::handleEvent(const sf::Event& event) {
+    using namespace Scene;
+
+    // Close window: exit
+    if (event.is<sf::Event::Closed>()) {
+        onClose();
+    }
+    if (const auto e = event.getIf<sf::Event::MouseButtonPressed>()) {
+        onMousePress(e);
+    }
+    if (const auto e = event.getIf<sf::Event::MouseWheelScrolled>()) {
+        onMouseScroll(e);
     }
 }
 
@@ -58,7 +65,7 @@ void Game::draw() {
     using namespace Scene;
 
     // Clear screen
-    Window::get().clear();
+    Window::get().clear(sf::Color::White);
 
     grid.draw();
     buildingSelector.draw();
@@ -75,10 +82,19 @@ Game::Game() {
     Fonts::init();
 
     auto [width, _] = Window::getMainView().getSize();
-    grid            = Grid(32, 32, width / 32);
+    grid            = Grid(64, 64, width / 64);
 
-    std::array colors = {sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color::Yellow, sf::Color::Cyan};
-    buildingSelector  = BuildingSelector(colors);
+    std::array buildings = {
+        TownHall,
+        School,
+        Farm,
+        GoldMine,
+        Quarry,
+        LumberjackHouse,
+        SawMill,
+        Tower,
+    };
+    buildingSelector = BuildingSelector(buildings);
 }
 
 Game::~Game() {
@@ -99,11 +115,9 @@ void Game::run() {
 
     // Start the game loop
     while (Window::get().isOpen()) {
-
         while (const std::optional event = Window::get().pollEvent()) {
-            handleEvent(event);
+            handleEvent(event.value());
         }
-
         draw();
     }
 }

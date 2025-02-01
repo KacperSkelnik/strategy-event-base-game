@@ -7,8 +7,9 @@
 #include "../globals/Scene.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include <iostream>
+#include <ranges>
 
-BuildingSelector::BuildingSelector(const std::span<sf::Color>& inputElements) {
+BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements) {
     using namespace Scene;
 
     const auto [centerX, centerY] = Window::getBottomView().getCenter();
@@ -20,13 +21,17 @@ BuildingSelector::BuildingSelector(const std::span<sf::Color>& inputElements) {
     const float space       = 0.15f * height;
 
     elements.reserve(inputElements.size());
+    buildings.reserve(inputElements.size());
     float shift = space;
-    for (const sf::Color color : inputElements) {
+    for (const BuildingType building : inputElements) {
         sf::RectangleShape rect;
         rect.setSize({elementSize, elementSize});
-        rect.setFillColor(color);
+        rect.setFillColor(Building::getColor(building));
         rect.setPosition({basePositionX + shift, basePositionY + space});
+
         elements.emplace_back(rect);
+        buildings.emplace_back(building);
+
         shift += (elementSize + space);
     }
     rightBorder = shift;
@@ -41,15 +46,15 @@ void BuildingSelector::draw() const {
     }
 }
 
-std::optional<sf::Color> BuildingSelector::getSelected() const {
+std::optional<BuildingType> BuildingSelector::getSelected() const {
     using namespace Scene;
 
     const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
 
-    for (const sf::RectangleShape& element : elements) {
-        if (element.getGlobalBounds().contains(worldPosition)) {
-            return element.getFillColor();
+    for (size_t i = 0; i < elements.size(); ++i) {
+        if (elements[i].getGlobalBounds().contains(worldPosition) && i < buildings.size()) {
+            return buildings[i];
         }
     }
     return std::nullopt;

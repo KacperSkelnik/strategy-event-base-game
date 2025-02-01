@@ -1,19 +1,19 @@
-//
-// Created by Kacper Skelnik on 25.01.2025.
-//
+#pragma once
 
-#ifndef GAME_H
-#define GAME_H
 #include "interface/BuildingSelector.h"
 #include "interface/Grid.h"
 
 class Game {
   private:
-    Grid                     grid;
-    BuildingSelector         buildingSelector;
-    std::optional<sf::Color> selectedBuilding;
+    Grid                        grid;
+    BuildingSelector            buildingSelector;
+    std::optional<BuildingType> selectedBuilding;
 
-    void handleEvent(const std::optional<sf::Event>& event);
+    static void onClose();
+    void        onMousePress(const sf::Event::MouseButtonPressed* event);
+    void        onMouseScroll(const sf::Event::MouseWheelScrolled* event) const;
+
+    void handleEvent(const sf::Event& event);
     void draw();
 
   public:
@@ -21,5 +21,3 @@ class Game {
     ~Game();
     void run();
 };
-
-#endif // GAME_H

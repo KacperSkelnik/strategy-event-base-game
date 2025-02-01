@@ -1,9 +1,5 @@
-//
-// Created by Kacper Skelnik on 25.01.2025.
-//
+#pragma once
 
-#ifndef GLOBALS_H
-#define GLOBALS_H
 #include "SFML/Graphics/RenderWindow.hpp"
 
 namespace Scene {
@@ -30,5 +26,3 @@ namespace Scene {
         static bool              isMouseOnBottomView(const sf::Vector2i& mousePosition);
     };
 } // namespace Scene
-
-#endif // GLOBALS_H

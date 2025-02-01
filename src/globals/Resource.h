@@ -1,9 +1,5 @@
-//
-// Created by Kacper Skelnik on 25.01.2025.
-//
+#pragma once
 
-#ifndef RESOURCE_H
-#define RESOURCE_H
 #include "SFML/Graphics/Font.hpp"
 
 namespace Resource {
@@ -20,5 +16,3 @@ namespace Resource {
         static sf::Font& getRegular();
     };
 } // namespace Resource
-
-#endif // RESOURCE_H

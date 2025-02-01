@@ -23,6 +23,8 @@ add_executable(main src/main.cpp
         src/Game.h
         src/interface/BuildingSelector.cpp
         src/interface/BuildingSelector.h
+        src/board/Building.cpp
+        src/board/Building.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)
