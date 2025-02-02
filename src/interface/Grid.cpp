@@ -11,7 +11,6 @@
 Grid::Grid(const int rows, const int cols): rows(rows), cols(cols) {
     line.setFillColor(sf::Color::Black);
     selectedCell.setFillColor(sf::Color::Transparent);
-    selectedCell.setOutlineColor(sf::Color::Black);
     selectedCell.setOutlineThickness(2);
     grid = std::vector(rows * cols, false);
 }
@@ -22,17 +21,20 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) {
 
     if (maybeSelectedBuilding) {
         const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
-
-        const unsigned     row  = getGridRow(static_cast<float>(mousePosition.y));
-        const unsigned     col  = getGridColumn(static_cast<float>(mousePosition.x));
-        const sf::Vector2i size = getBuildingsCells(maybeSelectedBuilding.value());
+        const unsigned     row           = getGridRow(static_cast<float>(mousePosition.y));
+        const unsigned     col           = getGridColumn(static_cast<float>(mousePosition.x));
+        const sf::Vector2i size          = getBuildingsCells(maybeSelectedBuilding.value());
 
         const float cellSize = Variables::getCellSize();
-
         selectedCell.setSize({static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize});
         selectedCell.setPosition(getCellPosition(row, col));
 
         Window::mainViewFocus();
+        if (canBuildingBePlaced(row, col, size)) {
+            selectedCell.setOutlineColor(sf::Color::Black);
+        } else {
+            selectedCell.setOutlineColor(sf::Color::Red);
+        }
         Window::get().draw(selectedCell);
     }
 }

@@ -17,5 +17,7 @@ namespace Settings {
         static float getCellSize();
         static float getWindowWidth();
         static float getWindowHeight();
+
+        static void setCellSize(float cellSize);
     };
 } // namespace Settings

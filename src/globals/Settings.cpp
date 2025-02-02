@@ -44,4 +44,10 @@ namespace Settings {
 
         return s_variables_instance->windowHeight;
     }
+
+    void Variables::setCellSize(float cellSize) {
+        assert(s_variables_instance);
+
+        s_variables_instance->cellSize = cellSize;
+    }
 } // namespace Settings

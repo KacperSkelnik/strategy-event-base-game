@@ -79,9 +79,18 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
 
 void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) {
     using namespace Scene;
+    using namespace Settings;
 
     if (Window::isMouseOnBottomView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
         buildingSelector.scroll(event->delta);
+    }
+    if (Window::isMouseOnMainView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
+        const float newCellSize = Variables::getCellSize() + event->delta / 4;
+        Variables::setCellSize(newCellSize);
+        for (const std::unique_ptr<Building>& building : buildings) {
+            building->recalculatePosition();
+            building->recalculateSize();
+        }
     }
 }
 
@@ -106,11 +115,11 @@ void Game::draw() {
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    grid.draw(selectedBuilding);
-    buildingSelector.draw();
     for (const std::unique_ptr<Building>& building : buildings) {
         building->draw();
     }
+    grid.draw(selectedBuilding);
+    buildingSelector.draw();
 
     // Update the window
     Window::get().display();
