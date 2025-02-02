@@ -25,7 +25,7 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) {
 
         const unsigned     row  = getGridRow(static_cast<float>(mousePosition.y));
         const unsigned     col  = getGridColumn(static_cast<float>(mousePosition.x));
-        const sf::Vector2i size = Building::getCells(maybeSelectedBuilding.value());
+        const sf::Vector2i size = getBuildingsCells(maybeSelectedBuilding.value());
 
         const float cellSize = Variables::getCellSize();
 
@@ -84,8 +84,7 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
     const unsigned row = getGridRow(static_cast<float>(position.y));
     const unsigned col = getGridColumn(static_cast<float>(position.x));
 
-    const sf::Vector2i size     = Building::getCells(buildingType);
-    const float        cellSize = Variables::getCellSize();
+    const sf::Vector2i size = getBuildingsCells(buildingType);
 
     if (canBuildingBePlaced(row, col, size)) {
         for (size_t i = 0; i < size.y; i++) {
@@ -96,9 +95,7 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
             }
         }
 
-        const sf::Vector2f buildingSize = {static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize};
-        const sf::Vector2f pos     = getCellPosition(row, col);
-        GridPosition       gridPos = {buildingSize, pos};
+        GridPosition gridPos = {row, col};
         return gridPos;
     }
     return std::nullopt;

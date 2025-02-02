@@ -7,80 +7,53 @@
 #include "../globals/Scene.h"
 #include "../globals/Settings.h"
 
-sf::Color Building::getColor(const BuildingType type) {
-    switch (type) {
-        case TownHall:
-            return sf::Color::Red;
-        case School:
-            return sf::Color::Blue;
-        case Farm:
-            return sf::Color::Green;
-        case GoldMine:
-            return sf::Color::Yellow;
-        case Quarry:
-            return sf::Color::Cyan;
-        case LumberjackHouse:
-            return sf::Color::Magenta;
-        case SawMill:
-            return sf::Color::White;
-        case Tower:
-            return sf::Color::Black;
-        default:
-            return sf::Color::Transparent;
-    }
-}
-
-sf::Vector2i Building::getCells(const BuildingType type) {
-    switch (type) {
-        case TownHall:
-        case School:
-            return {3, 3};
-        case Farm:
-            return {4, 4};
-        case GoldMine:
-        case Quarry:
-        case SawMill:
-            return {2, 2};
-        case LumberjackHouse:
-        case Tower:
-            return {1, 1};
-        default:
-            return {0, 0};
-    }
-}
-
-std::optional<float> getRange(const BuildingType type) {
-    switch (type) {
-        case Tower:
-            return 6;
-        default:
-            return std::nullopt;
-    }
-}
-
-Building::Building(const BuildingType type, const sf::Vector2f& size, const sf::Vector2f& position):
-    type(type), isSelected(true) {
+Building::Building(const BuildingType type, GridPosition position): type(type), isSelected(true), position(position) {
     using namespace Settings;
 
-    // RECT
-    rect.setPosition(position);
-    rect.setSize(size);
-    rect.setFillColor(getColor(type));
+    rect.setFillColor(getBuildingsColor(type));
 
-    // RANGE
-    if (const std::optional<float> maybeRange = getRange(type)) {
-        const auto [x, y]  = position;
-        const float radius = maybeRange.value() * Variables::getCellSize();
-
+    if (getBuildingsRange(type)) {
         range.emplace(sf::CircleShape {});
-
-        range->setPosition({x - radius + size.x / 2, y - radius + size.y / 2});
-        range->setRadius(radius);
-
         range->setFillColor(sf::Color::Transparent);
-
         range->setOutlineThickness(2.f);
         range->setOutlineColor(sf::Color::Red);
+    }
+
+    recalculatePosition();
+    recalculateSize();
+}
+
+void Building::recalculatePosition() {
+    using namespace Settings;
+
+    const auto [row, column] = position;
+    const float cellSize     = Variables::getCellSize();
+
+    const float x = column * cellSize;
+    const float y = row * cellSize;
+    rect.setPosition({x, y});
+
+    if (const std::optional<float> maybeRange = getBuildingsRange(type)) {
+        const float radius         = maybeRange.value() * Variables::getCellSize();
+        const auto [width, height] = getBuildingsCells(type);
+
+        const float offsetX = -radius + width * cellSize / 2;
+        const float offsetY = -radius + height * cellSize / 2;
+        range->setPosition({x + offsetX, y + offsetY});
+    }
+}
+
+void Building::recalculateSize() {
+    using namespace Settings;
+
+    const float cellSize       = Variables::getCellSize();
+    const auto [width, height] = getBuildingsCells(type);
+
+    rect.setSize({width * cellSize, height * cellSize});
+
+    if (const std::optional<float> maybeRange = getBuildingsRange(type)) {
+        const float radius = maybeRange.value() * cellSize;
+        range->setRadius(radius);
     }
 }
 

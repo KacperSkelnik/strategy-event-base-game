@@ -6,7 +6,6 @@
 
 #include "../globals/Scene.h"
 #include "SFML/Graphics/RectangleShape.hpp"
-#include <iostream>
 #include <ranges>
 
 BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements) {
@@ -26,7 +25,7 @@ BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements)
     for (const BuildingType building : inputElements) {
         sf::RectangleShape rect;
         rect.setSize({elementSize, elementSize});
-        rect.setFillColor(Building::getColor(building));
+        rect.setFillColor(getBuildingsColor(building));
         rect.setPosition({basePositionX + shift, basePositionY + space});
 
         elements.emplace_back(rect);
@@ -55,7 +54,7 @@ std::optional<BuildingType> BuildingSelector::getSelected() const {
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
 
     for (size_t i = 0; i < elements.size(); ++i) {
-        if (elements[i].getGlobalBounds().contains(worldPosition) & i < buildings.size()) {
+        if (elements[i].getGlobalBounds().contains(worldPosition) && i < buildings.size()) {
             return buildings[i];
         }
     }

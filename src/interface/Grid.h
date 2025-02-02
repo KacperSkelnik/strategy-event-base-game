@@ -1,12 +1,8 @@
 #pragma once
 
-#include "../board/Building.h"
+#include "../board/BuildingType.h"
+#include "GridPosition.h"
 #include <SFML/Graphics.hpp>
-
-struct GridPosition {
-    sf::Vector2f size;
-    sf::Vector2f position;
-};
 
 class Grid {
   private:

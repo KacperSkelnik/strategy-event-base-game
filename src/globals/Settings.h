@@ -4,7 +4,9 @@ namespace Settings {
 
     class Variables {
       private:
-        float cellSize;
+        float    cellSize;
+        unsigned windowWidth;
+        unsigned windowHeight;
 
       public:
         Variables()  = default;
@@ -13,5 +15,7 @@ namespace Settings {
         static void shutDown();
 
         static float getCellSize();
+        static float getWindowWidth();
+        static float getWindowHeight();
     };
 } // namespace Settings

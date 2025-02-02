@@ -12,13 +12,13 @@
 #include <SFML/Graphics.hpp>
 
 Game::Game() {
+    using namespace Settings;
     using namespace Scene;
     using namespace Resource;
-    using namespace Settings;
 
-    Window::init(800, 1000);
-    Fonts::init();
     Variables::init();
+    Window::init(Variables::getWindowWidth(), Variables::getWindowHeight());
+    Fonts::init();
 
     grid                     = Grid(64, 64);
     std::array buildingTypes = {
@@ -36,13 +36,13 @@ Game::Game() {
 }
 
 Game::~Game() {
+    using namespace Settings;
     using namespace Scene;
     using namespace Resource;
-    using namespace Settings;
 
     Variables::shutDown();
-    Fonts::shutDown();
     Window::shutDown();
+    Fonts::shutDown();
 }
 
 void Game::onClose() {
@@ -59,8 +59,7 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
             if (selectedBuilding) {
                 const std::optional<GridPosition> maybePosition = grid.addBuilding(selectedBuilding.value(), event->position);
                 if (maybePosition) {
-                    auto [size, position] = maybePosition.value();
-                    Building building(selectedBuilding.value(), size, position);
+                    Building building(selectedBuilding.value(), maybePosition.value());
                     buildings.emplace_back(std::make_unique<Building>(building));
                 }
             }

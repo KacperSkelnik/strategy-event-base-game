@@ -27,6 +27,8 @@ add_executable(main src/main.cpp
         src/board/Building.h
         src/globals/Settings.cpp
         src/globals/Settings.h
+        src/interface/GridPosition.h
+        src/board/BuildingType.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)
