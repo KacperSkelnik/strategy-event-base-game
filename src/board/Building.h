@@ -1,4 +1,5 @@
 #pragma once
+
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 
@@ -25,13 +26,11 @@ class Building {
 
   public:
     // TODO: replace with getTexture - probably as a part of globals
-    static sf::Color getColor(BuildingType type);
+    static sf::Color    getColor(BuildingType type);
+    static sf::Vector2i getCells(BuildingType type);
 
-    explicit Building(BuildingType type, float cellSize, sf::Vector2i mousePosition);
+    explicit Building(BuildingType type, const sf::Vector2f& size, const sf::Vector2f& position);
     ~Building() = default;
-
-    sf::Vector2f getPosition() const;
-    void         setPosition(sf::Vector2f position);
 
     void draw() const;
 };

@@ -25,6 +25,8 @@ add_executable(main src/main.cpp
         src/interface/BuildingSelector.h
         src/board/Building.cpp
         src/board/Building.h
+        src/globals/Settings.cpp
+        src/globals/Settings.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

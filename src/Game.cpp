@@ -6,10 +6,44 @@
 
 #include "globals/Resource.h"
 #include "globals/Scene.h"
+#include "globals/Settings.h"
 #include "interface/Grid.h"
-#include <iostream>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+Game::Game() {
+    using namespace Scene;
+    using namespace Resource;
+    using namespace Settings;
+
+    Window::init(800, 1000);
+    Fonts::init();
+    Variables::init();
+
+    grid                     = Grid(64, 64);
+    std::array buildingTypes = {
+        TownHall,
+        School,
+        Farm,
+        GoldMine,
+        Quarry,
+        LumberjackHouse,
+        SawMill,
+        Tower,
+    };
+    buildingSelector = BuildingSelector(buildingTypes);
+    buildings.reserve(64);
+}
+
+Game::~Game() {
+    using namespace Scene;
+    using namespace Resource;
+    using namespace Settings;
+
+    Variables::shutDown();
+    Fonts::shutDown();
+    Window::shutDown();
+}
 
 void Game::onClose() {
     using namespace Scene;
@@ -20,13 +54,15 @@ void Game::onClose() {
 void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     using namespace Scene;
 
-    std::cout << event->position.x << " " << event->position.y << std::endl;
-
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                Building building(selectedBuilding.value(), grid.getCellSize(), event->position);
-                grid.addBuilding(std::make_unique<Building>(building));
+                const std::optional<GridPosition> maybePosition = grid.addBuilding(selectedBuilding.value(), event->position);
+                if (maybePosition) {
+                    auto [size, position] = maybePosition.value();
+                    Building building(selectedBuilding.value(), size, position);
+                    buildings.emplace_back(std::make_unique<Building>(building));
+                }
             }
         }
 
@@ -36,9 +72,13 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
             }
         }
     }
+
+    if (event->button == sf::Mouse::Button::Right) {
+        selectedBuilding = std::nullopt;
+    }
 }
 
-void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
+void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) {
     using namespace Scene;
 
     if (Window::isMouseOnBottomView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
@@ -67,42 +107,14 @@ void Game::draw() {
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    grid.draw();
+    grid.draw(selectedBuilding);
     buildingSelector.draw();
+    for (const std::unique_ptr<Building>& building : buildings) {
+        building->draw();
+    }
 
     // Update the window
     Window::get().display();
-}
-
-Game::Game() {
-    using namespace Scene;
-    using namespace Resource;
-
-    Window::init(800, 1000);
-    Fonts::init();
-
-    auto [width, _] = Window::getMainView().getSize();
-    grid            = Grid(64, 64, width / 64);
-
-    std::array buildings = {
-        TownHall,
-        School,
-        Farm,
-        GoldMine,
-        Quarry,
-        LumberjackHouse,
-        SawMill,
-        Tower,
-    };
-    buildingSelector = BuildingSelector(buildings);
-}
-
-Game::~Game() {
-    using namespace Scene;
-    using namespace Resource;
-
-    Fonts::shutDown();
-    Window::shutDown();
 }
 
 void Game::run() {

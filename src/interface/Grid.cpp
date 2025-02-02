@@ -5,59 +5,101 @@
 #include "Grid.h"
 
 #include "../globals/Scene.h"
+#include "../globals/Settings.h"
 #include <iostream>
 
-Grid::Grid(const int rows, const int cols, const float cellSize): rows(rows), cols(cols), cellSize(cellSize) {
+Grid::Grid(const int rows, const int cols): rows(rows), cols(cols) {
     line.setFillColor(sf::Color::Black);
-    selectedCell.setSize(sf::Vector2f(cellSize, cellSize));
     selectedCell.setFillColor(sf::Color::Transparent);
     selectedCell.setOutlineColor(sf::Color::Black);
     selectedCell.setOutlineThickness(2);
+    grid = std::vector(rows * cols, false);
 }
 
-unsigned Grid::getGridColumn(const float posX, const float cellSize) const {
-    return static_cast<unsigned>(std::min(posX / cellSize, static_cast<float>(cols) - 1));
-}
-
-unsigned Grid::getGridRow(const float posY, const float cellSize) const {
-    return static_cast<unsigned>(std::min(posY / cellSize, static_cast<float>(rows) - 1));
-}
-
-sf::Vector2f Grid::getCellPosition(const unsigned row, const unsigned col, const float cellSize) {
-    return {static_cast<float>(col) * cellSize, static_cast<float>(row) * cellSize};
-}
-
-void Grid::draw() {
+void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) {
     using namespace Scene;
+    using namespace Settings;
 
-    const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
-    const unsigned     row           = getGridRow(mousePosition.y, cellSize);
-    const unsigned     col           = getGridColumn(mousePosition.x, cellSize);
-    selectedCell.setPosition({static_cast<float>(col) * cellSize, static_cast<float>(row) * cellSize});
+    if (maybeSelectedBuilding) {
+        const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
 
-    Window::mainViewFocus();
+        const unsigned     row  = getGridRow(static_cast<float>(mousePosition.y));
+        const unsigned     col  = getGridColumn(static_cast<float>(mousePosition.x));
+        const sf::Vector2i size = Building::getCells(maybeSelectedBuilding.value());
 
-    // Drawing cell selector
-    Window::get().draw(selectedCell);
+        const float cellSize = Variables::getCellSize();
 
-    // Drawing objects
-    for (const auto& obj : objects) {
-        obj->draw();
+        selectedCell.setSize({static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize});
+        selectedCell.setPosition(getCellPosition(row, col));
+
+        Window::mainViewFocus();
+        Window::get().draw(selectedCell);
     }
 }
 
-void Grid::addBuilding(std::unique_ptr<Building> building) {
-    const sf::Vector2f position = building->getPosition();
+unsigned Grid::getGridColumn(const float posX) const {
+    using namespace Settings;
 
-    const unsigned     row          = getGridRow(position.y, cellSize);
-    const unsigned     col          = getGridColumn(position.x, cellSize);
-    const sf::Vector2f cellPosition = getCellPosition(row, col, cellSize);
-
-    building->setPosition(cellPosition);
-
-    objects.push_back(std::move(building));
+    const float cellSize = Variables::getCellSize();
+    return static_cast<unsigned>(std::min(posX / cellSize, static_cast<float>(cols) - 1));
 }
 
-float Grid::getCellSize() const {
-    return cellSize;
+unsigned Grid::getGridRow(const float posY) const {
+    using namespace Settings;
+
+    const float cellSize = Variables::getCellSize();
+    return static_cast<unsigned>(std::min(posY / cellSize, static_cast<float>(rows) - 1));
+}
+
+sf::Vector2f Grid::getCellPosition(const unsigned row, const unsigned col) {
+    using namespace Settings;
+
+    const float cellSize = Variables::getCellSize();
+    return {static_cast<float>(col) * cellSize, static_cast<float>(row) * cellSize};
+}
+
+bool Grid::canBuildingBePlaced(const unsigned row, const unsigned col, const sf::Vector2i& size) const {
+    for (size_t i = 0; i < size.y; i++) {
+        for (size_t j = 0; j < size.x; j++) {
+            const unsigned newRow = row + i;
+            const unsigned newCol = col + j;
+
+            // Bounds check
+            if (newRow >= rows || newCol >= cols) {
+                return false;
+            }
+
+            // Cells occupation
+            if (grid[newRow * cols + newCol]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
+    using namespace Settings;
+
+    const unsigned row = getGridRow(static_cast<float>(position.y));
+    const unsigned col = getGridColumn(static_cast<float>(position.x));
+
+    const sf::Vector2i size     = Building::getCells(buildingType);
+    const float        cellSize = Variables::getCellSize();
+
+    if (canBuildingBePlaced(row, col, size)) {
+        for (size_t i = 0; i < size.y; i++) {
+            for (size_t j = 0; j < size.x; j++) {
+                const unsigned newRow        = row + i;
+                const unsigned newCol        = col + j;
+                grid[newRow * cols + newCol] = true;
+            }
+        }
+
+        const sf::Vector2f buildingSize = {static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize};
+        const sf::Vector2f pos     = getCellPosition(row, col);
+        GridPosition       gridPos = {buildingSize, pos};
+        return gridPos;
+    }
+    return std::nullopt;
 }

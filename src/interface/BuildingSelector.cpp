@@ -49,11 +49,13 @@ void BuildingSelector::draw() const {
 std::optional<BuildingType> BuildingSelector::getSelected() const {
     using namespace Scene;
 
+    Window::bottomViewFocus();
+
     const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
 
     for (size_t i = 0; i < elements.size(); ++i) {
-        if (elements[i].getGlobalBounds().contains(worldPosition) && i < buildings.size()) {
+        if (elements[i].getGlobalBounds().contains(worldPosition) & i < buildings.size()) {
             return buildings[i];
         }
     }

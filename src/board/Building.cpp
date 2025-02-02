@@ -5,8 +5,9 @@
 #include "Building.h"
 
 #include "../globals/Scene.h"
+#include "../globals/Settings.h"
 
-inline sf::Color Building::getColor(const BuildingType type) {
+sf::Color Building::getColor(const BuildingType type) {
     switch (type) {
         case TownHall:
             return sf::Color::Red;
@@ -29,7 +30,7 @@ inline sf::Color Building::getColor(const BuildingType type) {
     }
 }
 
-inline sf::Vector2f getSize(const BuildingType type) {
+sf::Vector2i Building::getCells(const BuildingType type) {
     switch (type) {
         case TownHall:
         case School:
@@ -48,7 +49,7 @@ inline sf::Vector2f getSize(const BuildingType type) {
     }
 }
 
-inline std::optional<float> getRange(const BuildingType type) {
+std::optional<float> getRange(const BuildingType type) {
     switch (type) {
         case Tower:
             return 6;
@@ -57,24 +58,24 @@ inline std::optional<float> getRange(const BuildingType type) {
     }
 }
 
-Building::Building(const BuildingType type, const float cellSize, sf::Vector2i mousePosition):
+Building::Building(const BuildingType type, const sf::Vector2f& size, const sf::Vector2f& position):
     type(type), isSelected(true) {
+    using namespace Settings;
 
-    auto [x, y] = mousePosition;
     // RECT
-    rect.setPosition({static_cast<float>(x), static_cast<float>(y)});
-
-    auto [xDim, yDim] = getSize(type);
-    rect.setSize({cellSize * xDim, cellSize * yDim});
-
+    rect.setPosition(position);
+    rect.setSize(size);
     rect.setFillColor(getColor(type));
 
     // RANGE
-    if (std::optional<float> maybeRange = getRange(type)) {
-        range.emplace(sf::CircleShape {});
-        range->setPosition({static_cast<float>(x), static_cast<float>(y)});
+    if (const std::optional<float> maybeRange = getRange(type)) {
+        const auto [x, y]  = position;
+        const float radius = maybeRange.value() * Variables::getCellSize();
 
-        range->setRadius(maybeRange.value() * cellSize);
+        range.emplace(sf::CircleShape {});
+
+        range->setPosition({x - radius + size.x / 2, y - radius + size.y / 2});
+        range->setRadius(radius);
 
         range->setFillColor(sf::Color::Transparent);
 
@@ -86,6 +87,7 @@ Building::Building(const BuildingType type, const float cellSize, sf::Vector2i m
 void Building::drawBuilding() const {
     using namespace Scene;
 
+    Window::mainViewFocus();
     Window::get().draw(rect);
 }
 
@@ -93,20 +95,8 @@ void Building::drawRange() const {
     using namespace Scene;
 
     if (range) {
+        Window::mainViewFocus();
         Window::get().draw(range.value());
-    }
-}
-
-sf::Vector2f Building::getPosition() const {
-    return rect.getPosition();
-}
-
-void Building::setPosition(const sf::Vector2f position) {
-    rect.setPosition(position);
-    if (range) {
-        auto [width, height] = rect.getSize();
-        auto [x, y]          = position;
-        range->setPosition({x - range->getRadius() + width / 2, y - range->getRadius() + height / 2});
     }
 }
 
