@@ -77,7 +77,7 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     }
 }
 
-void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) {
+void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
     using namespace Scene;
     using namespace Settings;
 
@@ -138,6 +138,9 @@ void Game::run() {
         while (const std::optional event = Window::get().pollEvent()) {
             handleEvent(event.value());
         }
+
+        Window::moveMainView(); // screen dragging after the mouse
+
         draw();
     }
 }

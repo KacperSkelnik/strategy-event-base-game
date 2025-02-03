@@ -6,14 +6,19 @@
 
 class Game {
   private:
-    Grid                                   grid;
-    BuildingSelector                       buildingSelector;
-    std::optional<BuildingType>            selectedBuilding;
+    // Interface
+    Grid             grid;
+    BuildingSelector buildingSelector;
+
+    // Board
     std::vector<std::unique_ptr<Building>> buildings;
+
+    // State
+    std::optional<BuildingType> selectedBuilding;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);
-    void        onMouseScroll(const sf::Event::MouseWheelScrolled* event);
+    void        onMouseScroll(const sf::Event::MouseWheelScrolled* event) const;
 
     void handleEvent(const sf::Event& event);
     void draw();

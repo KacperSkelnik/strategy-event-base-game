@@ -20,16 +20,17 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) {
     using namespace Settings;
 
     if (maybeSelectedBuilding) {
+        Window::mainViewFocus();
         const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
-        const unsigned     row           = getGridRow(static_cast<float>(mousePosition.y));
-        const unsigned     col           = getGridColumn(static_cast<float>(mousePosition.x));
+        const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
+        const unsigned     row           = getGridRow(worldPosition.y);
+        const unsigned     col           = getGridColumn(worldPosition.x);
         const sf::Vector2i size          = getBuildingsCells(maybeSelectedBuilding.value());
 
         const float cellSize = Variables::getCellSize();
         selectedCell.setSize({static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize});
         selectedCell.setPosition(getCellPosition(row, col));
 
-        Window::mainViewFocus();
         if (canBuildingBePlaced(row, col, size)) {
             selectedCell.setOutlineColor(sf::Color::Black);
         } else {
@@ -82,9 +83,12 @@ bool Grid::canBuildingBePlaced(const unsigned row, const unsigned col, const sf:
 
 std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
     using namespace Settings;
+    using namespace Scene;
 
-    const unsigned row = getGridRow(static_cast<float>(position.y));
-    const unsigned col = getGridColumn(static_cast<float>(position.x));
+    Window::mainViewFocus();
+    const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
+    const unsigned     row           = getGridRow(worldPosition.y);
+    const unsigned     col           = getGridColumn(worldPosition.x);
 
     const sf::Vector2i size = getBuildingsCells(buildingType);
 

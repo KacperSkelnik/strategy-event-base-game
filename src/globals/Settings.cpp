@@ -13,10 +13,11 @@ namespace Settings {
     void Variables::init() {
         assert(!s_variables_instance);
 
-        s_variables_instance               = new Variables();
-        s_variables_instance->cellSize     = 32;
-        s_variables_instance->windowWidth  = 800;
-        s_variables_instance->windowHeight = 1000;
+        s_variables_instance                 = new Variables();
+        s_variables_instance->cellSize       = 32;
+        s_variables_instance->windowWidth    = 800;
+        s_variables_instance->windowHeight   = 1000;
+        s_variables_instance->viewEdgesRatio = 0.05;
     }
 
     void Variables::shutDown() {
@@ -33,19 +34,25 @@ namespace Settings {
         return s_variables_instance->cellSize;
     }
 
-    float Variables::getWindowWidth() {
+    unsigned Variables::getWindowWidth() {
         assert(s_variables_instance);
 
         return s_variables_instance->windowWidth;
     }
 
-    float Variables::getWindowHeight() {
+    unsigned Variables::getWindowHeight() {
         assert(s_variables_instance);
 
         return s_variables_instance->windowHeight;
     }
 
-    void Variables::setCellSize(float cellSize) {
+    float Variables::getViewEdgesRatio() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->viewEdgesRatio;
+    }
+
+    void Variables::setCellSize(const float cellSize) {
         assert(s_variables_instance);
 
         s_variables_instance->cellSize = cellSize;

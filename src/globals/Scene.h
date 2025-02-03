@@ -24,5 +24,6 @@ namespace Scene {
         static sf::View&         getBottomView();
         static void              bottomViewFocus();
         static bool              isMouseOnBottomView(const sf::Vector2i& mousePosition);
+        static void              moveMainView();
     };
 } // namespace Scene

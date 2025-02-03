@@ -4,6 +4,7 @@
 
 #include "Scene.h"
 
+#include "Settings.h"
 #include <cassert>
 #include <iostream>
 
@@ -96,5 +97,32 @@ namespace Scene {
         assert(s_instance);
 
         return isMouseOn(mousePosition, s_instance->bottomView);
+    }
+
+    void Window::moveMainView() {
+        using namespace Settings;
+        assert(s_instance);
+
+        const sf::Vector2i mousePosition = sf::Mouse::getPosition(s_instance->window);
+        const float        edgeRatio     = Variables::getViewEdgesRatio();
+        const float        edgeWidth     = edgeRatio * static_cast<float>(Variables::getWindowWidth());
+        const float        edgeHeight    = edgeRatio * static_cast<float>(Variables::getWindowHeight());
+
+        if (static_cast<float>(mousePosition.x) < edgeWidth) {
+            mainViewFocus();
+            getMainView().move({-0.1, 0});
+        }
+        if (static_cast<float>(mousePosition.x) > static_cast<float>(Variables::getWindowWidth()) - edgeWidth) {
+            mainViewFocus();
+            getMainView().move({0.1, 0});
+        }
+        if (static_cast<float>(mousePosition.y) < edgeHeight) {
+            mainViewFocus();
+            getMainView().move({0, -0.1});
+        }
+        if (static_cast<float>(mousePosition.y) > static_cast<float>(Variables::getWindowHeight()) - edgeHeight) {
+            mainViewFocus();
+            getMainView().move({0, 0.1});
+        }
     }
 } // namespace Scene
