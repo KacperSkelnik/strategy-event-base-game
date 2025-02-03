@@ -47,6 +47,9 @@ namespace Scene {
 
         s_instance->bottomView = sf::View(sf::FloatRect({0.f, mainWindowHeight}, {width_f, bottomWindowHeight}));
         s_instance->bottomView.setViewport(sf::FloatRect({0.f, 0.8}, {1, 0.2f}));
+
+        s_instance->draggingViewClock.reset();
+        s_instance->draggingViewClock.start();
     }
 
     void Window::shutDown() {
@@ -99,30 +102,51 @@ namespace Scene {
         return isMouseOn(mousePosition, s_instance->bottomView);
     }
 
-    void Window::moveMainView() {
-        using namespace Settings;
+    void Window::dragMainView() {
         assert(s_instance);
+        using namespace Settings;
 
-        const sf::Vector2i mousePosition = sf::Mouse::getPosition(s_instance->window);
-        const float        edgeRatio     = Variables::getViewEdgesRatio();
-        const float        edgeWidth     = edgeRatio * static_cast<float>(Variables::getWindowWidth());
-        const float        edgeHeight    = edgeRatio * static_cast<float>(Variables::getWindowHeight());
+        auto move = [](const sf::Vector2f offset, const bool canMove) {
+            if (canMove) {
+                mainViewFocus();
+                getMainView().move(offset);
+            }
+        };
 
-        if (static_cast<float>(mousePosition.x) < edgeWidth) {
-            mainViewFocus();
-            getMainView().move({-0.1, 0});
+        const auto [x, y] = sf::Mouse::getPosition(s_instance->window);
+
+        const float draggingPart                   = Variables::getViewDraggingPart();
+        const auto [viewportWidth, viewportHeight] = s_instance->mainView.getViewport().size;
+        const float viewWidth                      = viewportWidth * static_cast<float>(Variables::getWindowWidth());
+        const float viewHeight                     = viewportHeight * static_cast<float>(Variables::getWindowHeight());
+        const float draggingWidth                  = draggingPart * viewWidth;
+        const float draggingHeight                 = draggingPart * viewHeight;
+
+        bool moved   = false;
+        bool canMove = false;
+        if (s_instance->draggingViewClock.getElapsedTime() >= Variables::getViewDraggingTime()) {
+            canMove = true;
         }
-        if (static_cast<float>(mousePosition.x) > static_cast<float>(Variables::getWindowWidth()) - edgeWidth) {
-            mainViewFocus();
-            getMainView().move({0.1, 0});
+
+        if (static_cast<float>(x) < draggingWidth) {
+            move({-Variables::getViewDraggingOffset(), 0}, canMove);
+            moved = true;
         }
-        if (static_cast<float>(mousePosition.y) < edgeHeight) {
-            mainViewFocus();
-            getMainView().move({0, -0.1});
+        if (static_cast<float>(x) > viewWidth - draggingWidth) {
+            move({Variables::getViewDraggingOffset(), 0}, canMove);
+            moved = true;
         }
-        if (static_cast<float>(mousePosition.y) > static_cast<float>(Variables::getWindowHeight()) - edgeHeight) {
-            mainViewFocus();
-            getMainView().move({0, 0.1});
+        if (static_cast<float>(y) < draggingHeight) {
+            move({0, -Variables::getViewDraggingOffset()}, canMove);
+            moved = true;
+        }
+        if (static_cast<float>(y) > viewHeight - draggingHeight && static_cast<float>(y) < viewHeight) {
+            move({0, Variables::getViewDraggingOffset()}, canMove);
+            moved = true;
+        }
+
+        if (!moved) {
+            s_instance->draggingViewClock.restart();
         }
     }
 } // namespace Scene

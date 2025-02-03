@@ -1,4 +1,5 @@
 #pragma once
+#include "SFML/System/Time.hpp"
 
 namespace Settings {
 
@@ -7,7 +8,9 @@ namespace Settings {
         float    cellSize;
         unsigned windowWidth;
         unsigned windowHeight;
-        float    viewEdgesRatio;
+        float    viewDraggingPart;
+        float    viewDraggingOffset;
+        sf::Time viewDraggingTime;
 
       public:
         Variables()  = default;
@@ -18,7 +21,9 @@ namespace Settings {
         static float    getCellSize();
         static unsigned getWindowWidth();
         static unsigned getWindowHeight();
-        static float    getViewEdgesRatio();
+        static float    getViewDraggingPart();
+        static float    getViewDraggingOffset();
+        static sf::Time getViewDraggingTime();
 
         static void setCellSize(float cellSize);
     };

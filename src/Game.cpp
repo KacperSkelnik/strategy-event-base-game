@@ -139,7 +139,7 @@ void Game::run() {
             handleEvent(event.value());
         }
 
-        Window::moveMainView(); // screen dragging after the mouse
+        Window::dragMainView(); // screen dragging after the mouse
 
         draw();
     }

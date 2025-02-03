@@ -13,11 +13,13 @@ namespace Settings {
     void Variables::init() {
         assert(!s_variables_instance);
 
-        s_variables_instance                 = new Variables();
-        s_variables_instance->cellSize       = 32;
-        s_variables_instance->windowWidth    = 800;
-        s_variables_instance->windowHeight   = 1000;
-        s_variables_instance->viewEdgesRatio = 0.05;
+        s_variables_instance                     = new Variables();
+        s_variables_instance->cellSize           = 32;
+        s_variables_instance->windowWidth        = 800;
+        s_variables_instance->windowHeight       = 1000;
+        s_variables_instance->viewDraggingPart   = 0.05;
+        s_variables_instance->viewDraggingOffset = 0.1;
+        s_variables_instance->viewDraggingTime   = sf::seconds(0.25);
     }
 
     void Variables::shutDown() {
@@ -46,10 +48,22 @@ namespace Settings {
         return s_variables_instance->windowHeight;
     }
 
-    float Variables::getViewEdgesRatio() {
+    float Variables::getViewDraggingPart() {
         assert(s_variables_instance);
 
-        return s_variables_instance->viewEdgesRatio;
+        return s_variables_instance->viewDraggingPart;
+    }
+
+    float Variables::getViewDraggingOffset() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->viewDraggingOffset;
+    }
+
+    sf::Time Variables::getViewDraggingTime() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->viewDraggingTime;
     }
 
     void Variables::setCellSize(const float cellSize) {

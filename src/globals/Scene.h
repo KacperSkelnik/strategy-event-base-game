@@ -9,6 +9,7 @@ namespace Scene {
         sf::RenderWindow window;
         sf::View         mainView;
         sf::View         bottomView;
+        sf::Clock        draggingViewClock;
 
         static bool isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view);
 
@@ -24,6 +25,6 @@ namespace Scene {
         static sf::View&         getBottomView();
         static void              bottomViewFocus();
         static bool              isMouseOnBottomView(const sf::Vector2i& mousePosition);
-        static void              moveMainView();
+        static void              dragMainView();
     };
 } // namespace Scene
