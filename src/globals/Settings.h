@@ -5,12 +5,14 @@ namespace Settings {
 
     class Variables {
       private:
-        float    cellSize;
+        float    spriteWidth;
+        float    spriteHeight;
         unsigned windowWidth;
         unsigned windowHeight;
         float    viewDraggingPart;
         float    viewDraggingOffset;
         sf::Time viewDraggingTime;
+        float    zoomFactor;
 
       public:
         Variables()  = default;
@@ -18,13 +20,13 @@ namespace Settings {
         static void init();
         static void shutDown();
 
-        static float    getCellSize();
+        static float    getSpriteWidth();
+        static float    getSpriteHeight();
         static unsigned getWindowWidth();
         static unsigned getWindowHeight();
         static float    getViewDraggingPart();
         static float    getViewDraggingOffset();
         static sf::Time getViewDraggingTime();
-
-        static void setCellSize(float cellSize);
+        static float    getZoomFactor();
     };
 } // namespace Settings

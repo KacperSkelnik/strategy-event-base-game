@@ -6,21 +6,25 @@
 
 class Grid {
   private:
-    int                rows, cols;
-    sf::RectangleShape line;
-    sf::RectangleShape selectedCell;
-    std::vector<bool>  grid; // state of occupied cells
+    float            iX = 1;
+    float            iY = 0.57;
+    float            jX = -1;
+    float            jY = 0.57;
+    unsigned         cols, rows;
+    std::vector<int> grid; // state of occupied cells. 0 = empty, bigger something else
 
-    unsigned            getGridColumn(float posX) const;
-    unsigned            getGridRow(float posY) const;
-    static sf::Vector2f getCellPosition(unsigned row, unsigned col);
+    [[nodiscard]] static sf::priv::Vector4<float> invertMatrix(sf::priv::Vector4<float> matrix);
+    [[nodiscard]] sf::Vector2u                    getGridPosition(float posX, float posY) const;
+    [[nodiscard]] sf::Vector2f                    getScreenPosition(unsigned col, unsigned row) const;
+    [[nodiscard]] BuildingType                    getBuildingFrom(unsigned col, unsigned row) const;
+    [[nodiscard]] static sf::Vector2f             getBuildingPosition(BuildingType building, sf::Vector2f position);
 
   public:
     Grid() = default;
-    explicit Grid(int rows, int cols);
+    explicit Grid(unsigned cols, unsigned rows);
     ~Grid() = default;
 
-    void                        draw(const std::optional<BuildingType>& maybeSelectedBuilding);
-    bool                        canBuildingBePlaced(unsigned row, unsigned col, const sf::Vector2i& size) const;
-    std::optional<GridPosition> addBuilding(BuildingType buildingType, const sf::Vector2i& position);
+    void                                      draw(const std::optional<BuildingType>& maybeSelectedBuilding) const;
+    [[nodiscard]] bool                        isCellOccupied(unsigned col, unsigned row) const;
+    [[nodiscard]] std::optional<GridPosition> addBuilding(BuildingType buildingType, const sf::Vector2i& position);
 };

@@ -4,81 +4,116 @@
 
 #include "Grid.h"
 
+#include "../globals/Resource.h"
 #include "../globals/Scene.h"
 #include "../globals/Settings.h"
-#include <iostream>
 
-Grid::Grid(const int rows, const int cols): rows(rows), cols(cols) {
-    line.setFillColor(sf::Color::Black);
-    selectedCell.setFillColor(sf::Color::Transparent);
-    selectedCell.setOutlineThickness(2);
-    grid = std::vector(rows * cols, false);
+Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
+    grid = std::vector(cols * rows, 0);
 }
 
-void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) {
+sf::priv::Vector4<float> Grid::invertMatrix(const sf::priv::Vector4<float> matrix) {
+    const float det = 1 / (matrix.x * matrix.w - matrix.y * matrix.z);
+    return {
+        det * matrix.w,
+        -det * matrix.y,
+        -det * matrix.z,
+        det * matrix.x,
+    };
+}
+
+sf::Vector2u Grid::getGridPosition(const float posX, const float posY) const {
+    using namespace Settings;
+
+    const sf::priv::Vector4 invertedMatrix = invertMatrix({
+        iX * 0.5f * Variables::getSpriteWidth(),
+        jX * 0.5f * Variables::getSpriteWidth(),
+        iY * 0.5f * Variables::getSpriteHeight(),
+        jY * 0.5f * Variables::getSpriteHeight(),
+    });
+
+    return {
+        static_cast<unsigned>(posX * invertedMatrix.x + posY * invertedMatrix.y),
+        static_cast<unsigned>(posX * invertedMatrix.z + posY * invertedMatrix.w)
+    };
+}
+
+sf::Vector2f Grid::getScreenPosition(const unsigned col, const unsigned row) const {
+    using namespace Settings;
+
+    const float screenX = (static_cast<float>(col) * iX + static_cast<float>(row) * jX) * Variables::getSpriteWidth() * 0.5f;
+    const float screenY = (static_cast<float>(col) * iY + static_cast<float>(row) * jY) * Variables::getSpriteHeight() * 0.5f;
+    return {screenX - Variables::getSpriteWidth() / 2, screenY};
+}
+
+BuildingType Grid::getBuildingFrom(const unsigned col, const unsigned row) const {
+    return static_cast<BuildingType>(grid[col + row * cols]);
+}
+
+sf::Vector2f Grid::getBuildingPosition(const BuildingType building, const sf::Vector2f position) {
+    using namespace Settings;
+
+    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) -
+                            static_cast<float>(getBuildingsTexture(building).getSize().x) / 2.0f;
+    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) -
+                            static_cast<float>(getBuildingsTexture(building).getSize().y);
+
+    return {centeredX, centeredY};
+}
+
+void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const {
     using namespace Scene;
     using namespace Settings;
+    using namespace Resource;
 
+    Window::mainViewFocus();
+
+    std::optional<unsigned> maybeSelectedCol = std::nullopt;
+    std::optional<unsigned> maybeSelectedRow = std::nullopt;
     if (maybeSelectedBuilding) {
-        Window::mainViewFocus();
         const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
         const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
-        const unsigned     row           = getGridRow(worldPosition.y);
-        const unsigned     col           = getGridColumn(worldPosition.x);
-        const sf::Vector2i size          = getBuildingsCells(maybeSelectedBuilding.value());
-
-        const float cellSize = Variables::getCellSize();
-        selectedCell.setSize({static_cast<float>(size.x) * cellSize, static_cast<float>(size.y) * cellSize});
-        selectedCell.setPosition(getCellPosition(row, col));
-
-        if (canBuildingBePlaced(row, col, size)) {
-            selectedCell.setOutlineColor(sf::Color::Black);
-        } else {
-            selectedCell.setOutlineColor(sf::Color::Red);
-        }
-        Window::get().draw(selectedCell);
+        const sf::Vector2u gridPosition  = getGridPosition(worldPosition.x, worldPosition.y);
+        maybeSelectedCol.emplace(gridPosition.x);
+        maybeSelectedRow.emplace(gridPosition.y);
     }
-}
 
-unsigned Grid::getGridColumn(const float posX) const {
-    using namespace Settings;
-
-    const float cellSize = Variables::getCellSize();
-    return static_cast<unsigned>(std::min(posX / cellSize, static_cast<float>(cols) - 1));
-}
-
-unsigned Grid::getGridRow(const float posY) const {
-    using namespace Settings;
-
-    const float cellSize = Variables::getCellSize();
-    return static_cast<unsigned>(std::min(posY / cellSize, static_cast<float>(rows) - 1));
-}
-
-sf::Vector2f Grid::getCellPosition(const unsigned row, const unsigned col) {
-    using namespace Settings;
-
-    const float cellSize = Variables::getCellSize();
-    return {static_cast<float>(col) * cellSize, static_cast<float>(row) * cellSize};
-}
-
-bool Grid::canBuildingBePlaced(const unsigned row, const unsigned col, const sf::Vector2i& size) const {
-    for (size_t i = 0; i < size.y; i++) {
-        for (size_t j = 0; j < size.x; j++) {
-            const unsigned newRow = row + i;
-            const unsigned newCol = col + j;
-
-            // Bounds check
-            if (newRow >= rows || newCol >= cols) {
-                return false;
+    for (int i = 0; i < cols; i++) {
+        for (int j = 0; j < rows; j++) {
+            const bool   isOccupied = isCellOccupied(i, j);
+            sf::Vector2f position   = getScreenPosition(i, j);
+            sf::Sprite   sprite(Textures::getGrass());
+            if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() == j) {
+                position.y += -Variables::getSpriteHeight() * 0.1f;
+                if (isOccupied) {
+                    sprite.setTexture(Textures::getGround());
+                }
             }
+            sprite.setPosition(position);
+            Window::get().draw(sprite);
 
-            // Cells occupation
-            if (grid[newRow * cols + newCol]) {
-                return false;
+            if (isOccupied) {
+                const BuildingType building = getBuildingFrom(i, j);
+                sf::Sprite         buildingSprite(getBuildingsTexture(building));
+                buildingSprite.setPosition(getBuildingPosition(building, position));
+                Window::get().draw(buildingSprite);
             }
         }
     }
-    return true;
+}
+
+bool Grid::isCellOccupied(const unsigned col, const unsigned row) const {
+    // Bounds check
+    if (col >= cols || row >= rows) {
+        return true;
+    }
+
+    // Cells occupation
+    if (grid[col + row * cols]) {
+        return true;
+    }
+
+    return false;
 }
 
 std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
@@ -87,21 +122,10 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
 
     Window::mainViewFocus();
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
-    const unsigned     row           = getGridRow(worldPosition.y);
-    const unsigned     col           = getGridColumn(worldPosition.x);
-
-    const sf::Vector2i size = getBuildingsCells(buildingType);
-
-    if (canBuildingBePlaced(row, col, size)) {
-        for (size_t i = 0; i < size.y; i++) {
-            for (size_t j = 0; j < size.x; j++) {
-                const unsigned newRow        = row + i;
-                const unsigned newCol        = col + j;
-                grid[newRow * cols + newCol] = true;
-            }
-        }
-
-        GridPosition gridPos = {row, col};
+    const auto [col, row]            = getGridPosition(worldPosition.x, worldPosition.y);
+    if (!isCellOccupied(col, row)) {
+        grid[col + row * cols] = buildingType;
+        GridPosition gridPos   = {row, col};
         return gridPos;
     }
     return std::nullopt;

@@ -19,8 +19,9 @@ Game::Game() {
     Variables::init();
     Window::init(Variables::getWindowWidth(), Variables::getWindowHeight());
     Fonts::init();
+    Textures::init();
 
-    grid                     = Grid(64, 64);
+    grid                     = Grid(32, 32);
     std::array buildingTypes = {
         TownHall,
         School,
@@ -32,7 +33,7 @@ Game::Game() {
         Tower,
     };
     buildingSelector = BuildingSelector(buildingTypes);
-    buildings.reserve(64);
+    buildings.reserve(32);
 }
 
 Game::~Game() {
@@ -43,6 +44,7 @@ Game::~Game() {
     Variables::shutDown();
     Window::shutDown();
     Fonts::shutDown();
+    Textures::shutDown();
 }
 
 void Game::onClose() {
@@ -85,12 +87,8 @@ void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
         buildingSelector.scroll(event->delta);
     }
     if (Window::isMouseOnMainView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
-        const float newCellSize = Variables::getCellSize() + event->delta / 4;
-        Variables::setCellSize(newCellSize);
-        for (const std::unique_ptr<Building>& building : buildings) {
-            building->recalculatePosition();
-            building->recalculateSize();
-        }
+        if (event->delta > 0) Window::getMainView().zoom(1 - Variables::getZoomFactor());
+        else Window::getMainView().zoom(1 + Variables::getZoomFactor());
     }
 }
 
@@ -109,15 +107,12 @@ void Game::handleEvent(const sf::Event& event) {
     }
 }
 
-void Game::draw() {
+void Game::draw() const {
     using namespace Scene;
 
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    for (const std::unique_ptr<Building>& building : buildings) {
-        building->draw();
-    }
     grid.draw(selectedBuilding);
     buildingSelector.draw();
 

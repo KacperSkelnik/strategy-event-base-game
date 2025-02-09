@@ -21,7 +21,7 @@ class Game {
     void        onMouseScroll(const sf::Event::MouseWheelScrolled* event) const;
 
     void handleEvent(const sf::Event& event);
-    void draw();
+    void draw() const;
 
   public:
     Game();

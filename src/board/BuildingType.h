@@ -1,10 +1,12 @@
 #pragma once
 
-#include "SFML/Graphics/Color.hpp"
+#include "../globals/Resource.h"
+#include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <optional>
 
 typedef enum BuildingType {
+    None,
     TownHall,
     School,
     Farm,
@@ -15,26 +17,28 @@ typedef enum BuildingType {
     Tower,
 } BuildingType;
 
-inline sf::Color getBuildingsColor(const BuildingType type) {
+inline sf::Texture& getBuildingsTexture(const BuildingType type) {
+    using namespace Resource;
+
     switch (type) {
         case TownHall:
-            return sf::Color::Red;
+            return Textures::getTownHall();
         case School:
-            return sf::Color::Blue;
+            return Textures::getSchool();
         case Farm:
-            return sf::Color::Green;
+            return Textures::getFarm();
         case GoldMine:
-            return sf::Color::Yellow;
+            return Textures::getGoldMine();
         case Quarry:
-            return sf::Color::Cyan;
+            return Textures::getQuarry();
         case LumberjackHouse:
-            return sf::Color::Magenta;
+            return Textures::getLumberjackHouse();
         case SawMill:
-            return sf::Color::White;
+            return Textures::getSawMill();
         case Tower:
-            return sf::Color::Black;
+            return Textures::getTower();
         default:
-            return sf::Color::Transparent;
+            return Textures::getGround();
     }
 }
 

@@ -14,12 +14,14 @@ namespace Settings {
         assert(!s_variables_instance);
 
         s_variables_instance                     = new Variables();
-        s_variables_instance->cellSize           = 32;
-        s_variables_instance->windowWidth        = 800;
-        s_variables_instance->windowHeight       = 1000;
+        s_variables_instance->spriteWidth        = 95;
+        s_variables_instance->spriteHeight       = 97;
+        s_variables_instance->windowWidth        = 1200;
+        s_variables_instance->windowHeight       = 1200;
         s_variables_instance->viewDraggingPart   = 0.05;
-        s_variables_instance->viewDraggingOffset = 0.1;
-        s_variables_instance->viewDraggingTime   = sf::seconds(0.25);
+        s_variables_instance->viewDraggingOffset = 2;
+        s_variables_instance->viewDraggingTime   = sf::seconds(0.15);
+        s_variables_instance->zoomFactor         = 0.05;
     }
 
     void Variables::shutDown() {
@@ -30,10 +32,16 @@ namespace Settings {
         s_variables_instance = nullptr;
     }
 
-    float Variables::getCellSize() {
+    float Variables::getSpriteWidth() {
         assert(s_variables_instance);
 
-        return s_variables_instance->cellSize;
+        return s_variables_instance->spriteWidth;
+    }
+
+    float Variables::getSpriteHeight() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->spriteHeight;
     }
 
     unsigned Variables::getWindowWidth() {
@@ -66,9 +74,9 @@ namespace Settings {
         return s_variables_instance->viewDraggingTime;
     }
 
-    void Variables::setCellSize(const float cellSize) {
+    float Variables::getZoomFactor() {
         assert(s_variables_instance);
 
-        s_variables_instance->cellSize = cellSize;
+        return s_variables_instance->zoomFactor;
     }
 } // namespace Settings

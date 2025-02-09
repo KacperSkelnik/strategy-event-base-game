@@ -6,16 +6,17 @@
 
 #include "Settings.h"
 #include <cassert>
-#include <iostream>
 
 namespace Scene {
 
     static Window* s_instance = nullptr;
 
     bool Window::isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view) {
-        const auto [xStart, yStart]            = view.getViewport().position;
-        const auto [windowWidth, windowHeight] = get().getSize();
-        const auto [width, height]             = view.getSize();
+        const auto [xStart, yStart]                    = view.getViewport().position;
+        const auto [windowWidth, windowHeight]         = get().getSize();
+        const auto [widthProportion, heightProportion] = view.getViewport().size;
+        const float width                              = widthProportion * static_cast<float>(windowWidth);
+        const float height                             = heightProportion * static_cast<float>(windowHeight);
 
         const float x = static_cast<float>(windowWidth) * xStart;
         const float y = static_cast<float>(windowHeight) * yStart;
@@ -128,7 +129,7 @@ namespace Scene {
             canMove = true;
         }
 
-        if (static_cast<float>(x) < draggingWidth) {
+        if (static_cast<float>(x) < draggingWidth && static_cast<float>(y) > 0) {
             move({-Variables::getViewDraggingOffset(), 0}, canMove);
             moved = true;
         }
@@ -136,7 +137,7 @@ namespace Scene {
             move({Variables::getViewDraggingOffset(), 0}, canMove);
             moved = true;
         }
-        if (static_cast<float>(y) < draggingHeight) {
+        if (static_cast<float>(y) < draggingHeight && static_cast<float>(y) > 0) {
             move({0, -Variables::getViewDraggingOffset()}, canMove);
             moved = true;
         }

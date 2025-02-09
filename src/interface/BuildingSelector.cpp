@@ -25,7 +25,7 @@ BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements)
     for (const BuildingType building : inputElements) {
         sf::RectangleShape rect;
         rect.setSize({elementSize, elementSize});
-        rect.setFillColor(getBuildingsColor(building));
+        rect.setTexture(&getBuildingsTexture(building));
         rect.setPosition({basePositionX + shift, basePositionY + space});
 
         elements.emplace_back(rect);
