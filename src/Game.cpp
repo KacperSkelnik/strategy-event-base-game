@@ -77,6 +77,19 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Right) {
         selectedBuilding = std::nullopt;
     }
+
+    if (event->button == sf::Mouse::Button::Middle) {
+        screenCanBeDragged = true;
+    }
+}
+
+void Game::onMouseRelease(const sf::Event::MouseButtonReleased* event) {
+    using namespace Scene;
+
+    if (event->button == sf::Mouse::Button::Middle) {
+        screenCanBeDragged = false;
+        Window::resetDraggingViewManualMousePosition();
+    }
 }
 
 void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
@@ -87,8 +100,14 @@ void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
         buildingSelector.scroll(event->delta);
     }
     if (Window::isMouseOnMainView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
-        if (event->delta > 0) Window::getMainView().zoom(1 - Variables::getZoomFactor());
-        else Window::getMainView().zoom(1 + Variables::getZoomFactor());
+        if (event->delta > 0 && Window::getZoomsCnt() <= Variables::getMaxZoomsCnt()) {
+            Window::getMainView().zoom(1 - Variables::getZoomFactor());
+            Window::increaseZoomsCnt();
+        }
+        if (event->delta < 0 && Window::getZoomsCnt() >= Variables::getMinZoomsCnt()) {
+            Window::getMainView().zoom(1 + Variables::getZoomFactor());
+            Window::decreaseZoomsCnt();
+        }
     }
 }
 
@@ -101,6 +120,9 @@ void Game::handleEvent(const sf::Event& event) {
     }
     if (const auto e = event.getIf<sf::Event::MouseButtonPressed>()) {
         onMousePress(e);
+    }
+    if (const auto e = event.getIf<sf::Event::MouseButtonReleased>()) {
+        onMouseRelease(e);
     }
     if (const auto e = event.getIf<sf::Event::MouseWheelScrolled>()) {
         onMouseScroll(e);
@@ -135,6 +157,7 @@ void Game::run() {
         }
 
         Window::dragMainView(); // screen dragging after the mouse
+        Window::dragMainViewManually(screenCanBeDragged);
 
         draw();
     }

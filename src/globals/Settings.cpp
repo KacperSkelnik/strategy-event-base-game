@@ -20,8 +20,10 @@ namespace Settings {
         s_variables_instance->windowHeight       = 1200;
         s_variables_instance->viewDraggingPart   = 0.05;
         s_variables_instance->viewDraggingOffset = 2;
-        s_variables_instance->viewDraggingTime   = sf::seconds(0.15);
+        s_variables_instance->viewDraggingTime   = sf::seconds(0.2);
         s_variables_instance->zoomFactor         = 0.05;
+        s_variables_instance->maxZoomsCnt        = 5;
+        s_variables_instance->minZoomsCnt        = -20;
     }
 
     void Variables::shutDown() {
@@ -78,5 +80,17 @@ namespace Settings {
         assert(s_variables_instance);
 
         return s_variables_instance->zoomFactor;
+    }
+
+    int Variables::getMaxZoomsCnt() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->maxZoomsCnt;
+    }
+
+    int Variables::getMinZoomsCnt() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->minZoomsCnt;
     }
 } // namespace Settings

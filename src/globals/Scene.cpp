@@ -36,21 +36,25 @@ namespace Scene {
 
         const float width_f = static_cast<float>(width);
 
-        const float mainWindowHeight   = static_cast<float>(height) * 0.8f;
-        const float bottomWindowHeight = static_cast<float>(height) * 0.2f;
+        const float mainWindowHeight   = static_cast<float>(height) * 0.9f;
+        const float bottomWindowHeight = static_cast<float>(height) * 0.1f;
 
         s_instance = new Window();
 
         s_instance->window = sf::RenderWindow(sf::VideoMode({width, height}), "Tower Defence");
 
         s_instance->mainView = sf::View(sf::FloatRect({0.f, 0.f}, {width_f, mainWindowHeight}));
-        s_instance->mainView.setViewport(sf::FloatRect({0.f, 0.f}, {1, 0.8f}));
+        s_instance->mainView.setViewport(sf::FloatRect({0.f, 0.f}, {1, 0.9f}));
 
         s_instance->bottomView = sf::View(sf::FloatRect({0.f, mainWindowHeight}, {width_f, bottomWindowHeight}));
-        s_instance->bottomView.setViewport(sf::FloatRect({0.f, 0.8}, {1, 0.2f}));
+        s_instance->bottomView.setViewport(sf::FloatRect({0.f, 0.9}, {1, 0.1f}));
 
         s_instance->draggingViewClock.reset();
         s_instance->draggingViewClock.start();
+
+        s_instance->draggingViewManualMousePosition = std::nullopt;
+
+        s_instance->zoomsCnt = 0;
     }
 
     void Window::shutDown() {
@@ -149,5 +153,47 @@ namespace Scene {
         if (!moved) {
             s_instance->draggingViewClock.restart();
         }
+    }
+
+    void Window::dragMainViewManually(const bool screenCanBeDragged) {
+        assert(s_instance);
+
+        if (screenCanBeDragged) {
+            if (s_instance->draggingViewManualMousePosition) {
+                const sf::Vector2i mousePosition = sf::Mouse::getPosition(s_instance->window);
+                mainViewFocus();
+                getMainView().move({
+                    static_cast<float>(s_instance->draggingViewManualMousePosition->x - mousePosition.x),
+                    static_cast<float>(s_instance->draggingViewManualMousePosition->y - mousePosition.y),
+                });
+                s_instance->draggingViewManualMousePosition = mousePosition;
+            } else {
+                s_instance->draggingViewManualMousePosition = sf::Mouse::getPosition(s_instance->window);
+            }
+        }
+    }
+
+    void Window::resetDraggingViewManualMousePosition() {
+        assert(s_instance);
+
+        s_instance->draggingViewManualMousePosition = std::nullopt;
+    }
+
+    int Window::getZoomsCnt() {
+        assert(s_instance);
+
+        return s_instance->zoomsCnt;
+    }
+
+    void Window::increaseZoomsCnt() {
+        assert(s_instance);
+
+        s_instance->zoomsCnt++;
+    }
+
+    void Window::decreaseZoomsCnt() {
+        assert(s_instance);
+
+        s_instance->zoomsCnt--;
     }
 } // namespace Scene

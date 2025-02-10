@@ -6,10 +6,12 @@ namespace Scene {
 
     class Window {
       private:
-        sf::RenderWindow window;
-        sf::View         mainView;
-        sf::View         bottomView;
-        sf::Clock        draggingViewClock;
+        sf::RenderWindow            window;
+        sf::View                    mainView;
+        sf::View                    bottomView;
+        sf::Clock                   draggingViewClock;
+        std::optional<sf::Vector2i> draggingViewManualMousePosition;
+        int                         zoomsCnt;
 
         static bool isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view);
 
@@ -26,5 +28,10 @@ namespace Scene {
         static void              bottomViewFocus();
         static bool              isMouseOnBottomView(const sf::Vector2i& mousePosition);
         static void              dragMainView();
+        static void              dragMainViewManually(bool screenCanBeDragged);
+        static void              resetDraggingViewManualMousePosition();
+        static int               getZoomsCnt();
+        static void              increaseZoomsCnt();
+        static void              decreaseZoomsCnt();
     };
 } // namespace Scene

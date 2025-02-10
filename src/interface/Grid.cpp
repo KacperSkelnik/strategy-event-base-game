@@ -82,15 +82,23 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
         for (int j = 0; j < rows; j++) {
             const bool   isOccupied = isCellOccupied(i, j);
             sf::Vector2f position   = getScreenPosition(i, j);
-            sf::Sprite   sprite(Textures::getGrass());
+
+            sf::Sprite                sprite(Textures::getGrass());
+            std::optional<sf::Sprite> buildingToBuildSprite = std::nullopt;
             if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() == j) {
                 position.y += -Variables::getSpriteHeight() * 0.1f;
                 if (isOccupied) {
                     sprite.setTexture(Textures::getGround());
+                } else {
+                    buildingToBuildSprite.emplace(sf::Sprite(getBuildingsTexture(maybeSelectedBuilding.value())));
+                    buildingToBuildSprite->setPosition(getBuildingPosition(maybeSelectedBuilding.value(), position));
                 }
             }
             sprite.setPosition(position);
             Window::get().draw(sprite);
+            if (buildingToBuildSprite) {
+                Window::get().draw(buildingToBuildSprite.value());
+            }
 
             if (isOccupied) {
                 const BuildingType building = getBuildingFrom(i, j);

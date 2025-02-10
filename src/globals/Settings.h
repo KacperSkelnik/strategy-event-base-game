@@ -13,6 +13,8 @@ namespace Settings {
         float    viewDraggingOffset;
         sf::Time viewDraggingTime;
         float    zoomFactor;
+        int      maxZoomsCnt;
+        int      minZoomsCnt;
 
       public:
         Variables()  = default;
@@ -28,5 +30,7 @@ namespace Settings {
         static float    getViewDraggingOffset();
         static sf::Time getViewDraggingTime();
         static float    getZoomFactor();
+        static int      getMaxZoomsCnt();
+        static int      getMinZoomsCnt();
     };
 } // namespace Settings

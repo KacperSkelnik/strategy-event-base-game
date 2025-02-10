@@ -9,6 +9,7 @@ class Game {
     // Interface
     Grid             grid;
     BuildingSelector buildingSelector;
+    bool             screenCanBeDragged;
 
     // Board
     std::vector<std::unique_ptr<Building>> buildings;
@@ -18,6 +19,7 @@ class Game {
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);
+    void        onMouseRelease(const sf::Event::MouseButtonReleased* event);
     void        onMouseScroll(const sf::Event::MouseWheelScrolled* event) const;
 
     void handleEvent(const sf::Event& event);
