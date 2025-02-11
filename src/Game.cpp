@@ -5,7 +5,7 @@
 #include "Game.h"
 
 #include "globals/Resource.h"
-#include "globals/Scene.h"
+#include "globals/Screen.h"
 #include "globals/Settings.h"
 #include "interface/Grid.h"
 #include <SFML/Audio.hpp>
@@ -13,7 +13,7 @@
 
 Game::Game() {
     using namespace Settings;
-    using namespace Scene;
+    using namespace Screen;
     using namespace Resource;
 
     Variables::init();
@@ -38,7 +38,7 @@ Game::Game() {
 
 Game::~Game() {
     using namespace Settings;
-    using namespace Scene;
+    using namespace Screen;
     using namespace Resource;
 
     Variables::shutDown();
@@ -48,13 +48,13 @@ Game::~Game() {
 }
 
 void Game::onClose() {
-    using namespace Scene;
+    using namespace Screen;
 
     Window::get().close();
 }
 
 void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
-    using namespace Scene;
+    using namespace Screen;
 
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
@@ -84,7 +84,7 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
 }
 
 void Game::onMouseRelease(const sf::Event::MouseButtonReleased* event) {
-    using namespace Scene;
+    using namespace Screen;
 
     if (event->button == sf::Mouse::Button::Middle) {
         screenCanBeDragged = false;
@@ -93,7 +93,7 @@ void Game::onMouseRelease(const sf::Event::MouseButtonReleased* event) {
 }
 
 void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
-    using namespace Scene;
+    using namespace Screen;
     using namespace Settings;
 
     if (Window::isMouseOnBottomView(event->position) && event->wheel == sf::Mouse::Wheel::Vertical) {
@@ -112,7 +112,7 @@ void Game::onMouseScroll(const sf::Event::MouseWheelScrolled* event) const {
 }
 
 void Game::handleEvent(const sf::Event& event) {
-    using namespace Scene;
+    using namespace Screen;
 
     // Close window: exit
     if (event.is<sf::Event::Closed>()) {
@@ -130,7 +130,7 @@ void Game::handleEvent(const sf::Event& event) {
 }
 
 void Game::draw() const {
-    using namespace Scene;
+    using namespace Screen;
 
     // Clear screen
     Window::get().clear(sf::Color::White);
@@ -143,7 +143,7 @@ void Game::draw() const {
 }
 
 void Game::run() {
-    using namespace Scene;
+    using namespace Screen;
     using namespace Resource;
 
     sf::Text text(Fonts::getRegular());

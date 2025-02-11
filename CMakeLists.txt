@@ -15,8 +15,8 @@ FetchContent_MakeAvailable(SFML)
 add_executable(main src/main.cpp
         src/interface/grid.cpp
         src/interface/grid.h
-        src/globals/Scene.cpp
-        src/globals/Scene.h
+        src/globals/Screen.cpp
+        src/globals/Screen.h
         src/globals/Resource.cpp
         src/globals/Resource.h
         src/Game.cpp

@@ -2,12 +2,12 @@
 // Created by Kacper Skelnik on 25.01.2025.
 //
 
-#include "Scene.h"
+#include "Screen.h"
 
 #include "Settings.h"
 #include <cassert>
 
-namespace Scene {
+namespace Screen {
 
     static Window* s_instance = nullptr;
 
@@ -196,4 +196,4 @@ namespace Scene {
 
         s_instance->zoomsCnt--;
     }
-} // namespace Scene
+} // namespace Screen

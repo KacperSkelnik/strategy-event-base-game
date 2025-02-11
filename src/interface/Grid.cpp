@@ -5,7 +5,7 @@
 #include "Grid.h"
 
 #include "../globals/Resource.h"
-#include "../globals/Scene.h"
+#include "../globals/Screen.h"
 #include "../globals/Settings.h"
 
 Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
@@ -62,7 +62,7 @@ sf::Vector2f Grid::getBuildingPosition(const BuildingType building, const sf::Ve
 }
 
 void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const {
-    using namespace Scene;
+    using namespace Screen;
     using namespace Settings;
     using namespace Resource;
 
@@ -126,7 +126,7 @@ bool Grid::isCellOccupied(const unsigned col, const unsigned row) const {
 
 std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
     using namespace Settings;
-    using namespace Scene;
+    using namespace Screen;
 
     Window::mainViewFocus();
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);

@@ -4,12 +4,12 @@
 
 #include "BuildingSelector.h"
 
-#include "../globals/Scene.h"
+#include "../globals/Screen.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include <ranges>
 
 BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements) {
-    using namespace Scene;
+    using namespace Screen;
 
     const auto [centerX, centerY] = Window::getBottomView().getCenter();
     const auto [width, height]    = Window::getBottomView().getSize();
@@ -37,7 +37,7 @@ BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements)
 }
 
 void BuildingSelector::draw() const {
-    using namespace Scene;
+    using namespace Screen;
 
     Window::bottomViewFocus();
     for (const sf::RectangleShape& element : elements) {
@@ -46,7 +46,7 @@ void BuildingSelector::draw() const {
 }
 
 std::optional<BuildingType> BuildingSelector::getSelected() const {
-    using namespace Scene;
+    using namespace Screen;
 
     Window::bottomViewFocus();
 
@@ -62,7 +62,7 @@ std::optional<BuildingType> BuildingSelector::getSelected() const {
 }
 
 void BuildingSelector::scroll(const float delta) const {
-    using namespace Scene;
+    using namespace Screen;
 
     const float offset  = -4 * delta;
     const float centerX = Window::getBottomView().getCenter().x;

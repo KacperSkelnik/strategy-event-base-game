@@ -2,7 +2,7 @@
 
 #include "SFML/Graphics/RenderWindow.hpp"
 
-namespace Scene {
+namespace Screen {
 
     class Window {
       private:
@@ -34,4 +34,4 @@ namespace Scene {
         static void              increaseZoomsCnt();
         static void              decreaseZoomsCnt();
     };
-} // namespace Scene
+} // namespace Screen
