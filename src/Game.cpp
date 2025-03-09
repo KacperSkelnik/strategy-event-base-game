@@ -12,11 +12,11 @@
 #include <SFML/Graphics.hpp>
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
+    economyState(EconomyState(500)),
     grid(Grid(32, 32)),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
-    screenCanBeDragged(false),
-    economyState(EconomyState(500)) {
+    screenCanBeDragged(false) {
     buildings.reserve(32);
 }
 
@@ -156,6 +156,7 @@ void Game::run() {
 
         Window::dragMainView(); // screen dragging after the mouse
         Window::dragMainViewManually(screenCanBeDragged);
+        economyPanel.update();
 
         draw();
     }

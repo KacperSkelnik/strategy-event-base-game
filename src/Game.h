@@ -8,18 +8,18 @@
 
 class Game {
   private:
-    // Interface
-    Grid             grid;
-    BuildingSelector buildingSelector;
-    EconomyPanel     economyPanel;
-    bool             screenCanBeDragged;
-
     // Board
     std::vector<std::unique_ptr<Building>> buildings;
 
     // State
     std::optional<BuildingType> selectedBuilding;
     EconomyState                economyState;
+
+    // Interface
+    Grid             grid;
+    BuildingSelector buildingSelector;
+    EconomyPanel     economyPanel;
+    bool             screenCanBeDragged;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);

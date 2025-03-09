@@ -1,7 +1,6 @@
 #pragma once
 #include "../EconomyState.h"
 #include "EconomyCell.h"
-#include "SFML/Graphics/RectangleShape.hpp"
 
 class EconomyPanel {
   private:
@@ -13,5 +12,6 @@ class EconomyPanel {
     explicit EconomyPanel(const EconomyState& economyState);
     ~EconomyPanel() = default;
 
+    void update();
     void draw() const;
 };

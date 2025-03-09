@@ -15,17 +15,28 @@ EconomyPanel::EconomyPanel(const EconomyState& economyState): economyState(econo
     const float basePositionX     = centerX - width / 2;
     const float basePositionY     = centerY - height / 2;
 
-    const float elementSize = 0.2f * width;
-    const float space       = 0.05f * width;
+    const float space         = 0.05f * width;
+    const float elementHeight = 0.05f * height;
+    const float elementWidth  = width - 2 * space;
 
-    float shift = space;
-    elements.emplace_back(EconomyCell(economyState.getGold(), {elementSize, elementSize}, {basePositionX + space, basePositionY + shift}));
-    shift += (elementSize + space);
+    elements.emplace_back(
+        [&]() {
+            return economyState.getGold();
+        },
+        sf::Vector2f {basePositionX + space, basePositionY + space},
+        sf::Vector2f {elementWidth, elementHeight}
+    );
+}
+
+void EconomyPanel::update() {
+    for (EconomyCell& element : elements) {
+        element.update();
+    }
 }
 
 void EconomyPanel::draw() const {
 
-    for (EconomyCell element : elements) {
+    for (const EconomyCell& element : elements) {
         element.draw();
     }
 }

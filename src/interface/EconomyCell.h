@@ -1,22 +1,28 @@
 #pragma once
 #include "SFML/Graphics/RectangleShape.hpp"
+#include "SFML/Graphics/Text.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <array>
+#include <functional>
 
 class EconomyCell {
   private:
-    const long&          economyResourceReference;
-    std::array<long, 50> amountPlot;
-    size_t               amountPlotHead;
+    std::function<long()> economyResourceGetter;
+    std::array<long, 250> values;
+    sf::RectangleShape    background;
+    sf::VertexArray       plot;
+    float                 maxPlotValue;
+    sf::Text              textRepresentation;
 
-    sf::RectangleShape background;
-
-    void addNewAmount();
+    void  updateValues();
+    float calculateY(float value) const;
+    void  updatePlot();
 
   public:
     EconomyCell() = delete;
-    explicit EconomyCell(const long& economyResourceReference, sf::Vector2f position, sf::Vector2f size);
+    explicit EconomyCell(std::function<long()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
     ~EconomyCell() = default;
 
-    void draw();
+    void update();
+    void draw() const;
 };
