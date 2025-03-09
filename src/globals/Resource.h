@@ -30,6 +30,8 @@ namespace Resource {
         sf::Texture school;
         sf::Texture tower;
         sf::Texture townHall;
+        // economy
+        sf::Texture gold;
 
       public:
         Textures()  = default;
@@ -48,5 +50,7 @@ namespace Resource {
         static sf::Texture& getSchool();
         static sf::Texture& getTower();
         static sf::Texture& getTownHall();
+        // economy
+        static sf::Texture& getGold();
     };
 } // namespace Resource

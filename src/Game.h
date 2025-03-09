@@ -1,6 +1,8 @@
 #pragma once
 
+#include "EconomyState.h"
 #include "interface/BuildingSelector.h"
+#include "interface/EconomyPanel.h"
 #include "interface/Grid.h"
 #include <vector>
 
@@ -9,6 +11,7 @@ class Game {
     // Interface
     Grid             grid;
     BuildingSelector buildingSelector;
+    EconomyPanel     economyPanel;
     bool             screenCanBeDragged;
 
     // Board
@@ -16,6 +19,7 @@ class Game {
 
     // State
     std::optional<BuildingType> selectedBuilding;
+    EconomyState                economyState;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);
@@ -25,8 +29,11 @@ class Game {
     void handleEvent(const sf::Event& event);
     void draw() const;
 
+    Game(std::initializer_list<BuildingType> buildingTypes);
+
   public:
-    Game();
+    Game() = delete;
     ~Game();
-    void run();
+    static Game create(std::initializer_list<BuildingType> buildingTypes);
+    void        run();
 };

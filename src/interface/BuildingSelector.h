@@ -12,8 +12,8 @@ class BuildingSelector {
     float rightBorder = 0; // X position of the right corner of the farthest right element + space
 
   public:
-    BuildingSelector() = default;
-    explicit BuildingSelector(const std::span<BuildingType>& inputElements);
+    BuildingSelector() = delete;
+    BuildingSelector(std::initializer_list<BuildingType> inputElements);
     ~BuildingSelector() = default;
 
     void                                      draw() const;

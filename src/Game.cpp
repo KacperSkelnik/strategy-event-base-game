@@ -11,7 +11,16 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-Game::Game() {
+Game::Game(const std::initializer_list<BuildingType> buildingTypes):
+    grid(Grid(32, 32)),
+    buildingSelector(BuildingSelector(buildingTypes)),
+    economyPanel(economyState),
+    screenCanBeDragged(false),
+    economyState(EconomyState(500)) {
+    buildings.reserve(32);
+}
+
+Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
     using namespace Screen;
     using namespace Resource;
@@ -21,19 +30,7 @@ Game::Game() {
     Fonts::init();
     Textures::init();
 
-    grid                     = Grid(32, 32);
-    std::array buildingTypes = {
-        TownHall,
-        School,
-        Farm,
-        GoldMine,
-        Quarry,
-        LumberjackHouse,
-        SawMill,
-        Tower,
-    };
-    buildingSelector = BuildingSelector(buildingTypes);
-    buildings.reserve(32);
+    return Game(buildingTypes);
 }
 
 Game::~Game() {
@@ -137,6 +134,7 @@ void Game::draw() const {
 
     grid.draw(selectedBuilding);
     buildingSelector.draw();
+    economyPanel.draw();
 
     // Update the window
     Window::get().display();

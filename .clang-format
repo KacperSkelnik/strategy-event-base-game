@@ -1,4 +1,5 @@
 ## Language
+## Language
 Language: Cpp
 Standard: Latest
 
@@ -21,6 +22,7 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLambdasOnASingleLine: Empty
 AllowShortLoopsOnASingleLine: false
+PackConstructorInitializers: CurrentLine
 BreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 BreakTemplateDeclarations: No
