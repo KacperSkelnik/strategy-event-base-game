@@ -9,6 +9,7 @@ namespace Screen {
         sf::RenderWindow            window;
         sf::View                    mainView;
         sf::View                    bottomView;
+        sf::View                    rightView;
         sf::Clock                   draggingViewClock;
         std::optional<sf::Vector2i> draggingViewManualMousePosition;
         int                         zoomsCnt;
@@ -27,6 +28,9 @@ namespace Screen {
         static sf::View&         getBottomView();
         static void              bottomViewFocus();
         static bool              isMouseOnBottomView(const sf::Vector2i& mousePosition);
+        static sf::View&         getRightView();
+        static void              rightViewFocus();
+        static bool              isMouseOnRightView(const sf::Vector2i& mousePosition);
         static void              dragMainView();
         static void              dragMainViewManually(bool screenCanBeDragged);
         static void              resetDraggingViewManualMousePosition();

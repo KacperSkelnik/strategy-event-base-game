@@ -20,7 +20,7 @@ class Grid {
     [[nodiscard]] static sf::Vector2f             getBuildingPosition(BuildingType building, sf::Vector2f position);
 
   public:
-    Grid() = default;
+    Grid() = delete;
     explicit Grid(unsigned cols, unsigned rows);
     ~Grid() = default;
 

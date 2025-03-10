@@ -11,6 +11,50 @@ namespace Screen {
 
     static Window* s_instance = nullptr;
 
+    void Window::init(const unsigned initialWidth, const unsigned initialHeight) {
+        assert(!s_instance);
+
+        const auto width  = static_cast<float>(initialWidth);
+        const auto height = static_cast<float>(initialHeight);
+
+        auto calculateViewRectangle = [width, height](const sf::FloatRect viewport) {
+            return sf::FloatRect(
+                {
+                    viewport.position.x * width,
+                    viewport.position.y * height,
+                },
+                {
+                    viewport.size.x * width,
+                    viewport.size.y * height,
+                }
+            );
+        };
+
+        constexpr auto mainViewport   = sf::FloatRect({0, 0.}, {0.8, 0.9});
+        constexpr auto bottomViewport = sf::FloatRect({0, 0.9}, {0.8, 0.1});
+        constexpr auto rightViewport  = sf::FloatRect({0.8, 0}, {0.2, 1});
+
+        s_instance = new Window();
+
+        s_instance->window = sf::RenderWindow(sf::VideoMode({initialWidth, initialHeight}), "Tower Defence");
+
+        s_instance->mainView = sf::View(calculateViewRectangle(mainViewport));
+        s_instance->mainView.setViewport(mainViewport);
+
+        s_instance->bottomView = sf::View(calculateViewRectangle(bottomViewport));
+        s_instance->bottomView.setViewport(bottomViewport);
+
+        s_instance->rightView = sf::View(calculateViewRectangle(rightViewport));
+        s_instance->rightView.setViewport(rightViewport);
+
+        s_instance->draggingViewClock.reset();
+        s_instance->draggingViewClock.start();
+
+        s_instance->draggingViewManualMousePosition = std::nullopt;
+
+        s_instance->zoomsCnt = 0;
+    }
+
     bool Window::isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view) {
         const auto [xStart, yStart]                    = view.getViewport().position;
         const auto [windowWidth, windowHeight]         = get().getSize();
@@ -26,35 +70,6 @@ namespace Screen {
             return true;
         }
         return false;
-    }
-
-    void Window::init(const unsigned initialWidth, const unsigned initialHeight) {
-        assert(!s_instance);
-
-        const unsigned width  = initialWidth;
-        const unsigned height = initialHeight;
-
-        const float width_f = static_cast<float>(width);
-
-        const float mainWindowHeight   = static_cast<float>(height) * 0.9f;
-        const float bottomWindowHeight = static_cast<float>(height) * 0.1f;
-
-        s_instance = new Window();
-
-        s_instance->window = sf::RenderWindow(sf::VideoMode({width, height}), "Tower Defence");
-
-        s_instance->mainView = sf::View(sf::FloatRect({0.f, 0.f}, {width_f, mainWindowHeight}));
-        s_instance->mainView.setViewport(sf::FloatRect({0.f, 0.f}, {1, 0.9f}));
-
-        s_instance->bottomView = sf::View(sf::FloatRect({0.f, mainWindowHeight}, {width_f, bottomWindowHeight}));
-        s_instance->bottomView.setViewport(sf::FloatRect({0.f, 0.9}, {1, 0.1f}));
-
-        s_instance->draggingViewClock.reset();
-        s_instance->draggingViewClock.start();
-
-        s_instance->draggingViewManualMousePosition = std::nullopt;
-
-        s_instance->zoomsCnt = 0;
     }
 
     void Window::shutDown() {
@@ -107,6 +122,24 @@ namespace Screen {
         return isMouseOn(mousePosition, s_instance->bottomView);
     }
 
+    sf::View& Window::getRightView() {
+        assert(s_instance);
+
+        return s_instance->rightView;
+    }
+
+    void Window::rightViewFocus() {
+        assert(s_instance);
+
+        s_instance->window.setView(s_instance->rightView);
+    }
+
+    bool Window::isMouseOnRightView(const sf::Vector2i& mousePosition) {
+        assert(s_instance);
+
+        return isMouseOn(mousePosition, s_instance->rightView);
+    }
+
     void Window::dragMainView() {
         assert(s_instance);
         using namespace Settings;
@@ -118,39 +151,42 @@ namespace Screen {
             }
         };
 
+        bool isMouseInsideDraggingArea = false;
+
         const auto [x, y] = sf::Mouse::getPosition(s_instance->window);
+        if (isMouseOnMainView({x, y})) {
 
-        const float draggingPart                   = Variables::getViewDraggingPart();
-        const auto [viewportWidth, viewportHeight] = s_instance->mainView.getViewport().size;
-        const float viewWidth                      = viewportWidth * static_cast<float>(Variables::getWindowWidth());
-        const float viewHeight                     = viewportHeight * static_cast<float>(Variables::getWindowHeight());
-        const float draggingWidth                  = draggingPart * viewWidth;
-        const float draggingHeight                 = draggingPart * viewHeight;
+            const float draggingPart                   = Variables::getViewDraggingPart();
+            const auto [viewportWidth, viewportHeight] = s_instance->mainView.getViewport().size;
+            const float viewWidth      = viewportWidth * static_cast<float>(Variables::getWindowWidth());
+            const float viewHeight     = viewportHeight * static_cast<float>(Variables::getWindowHeight());
+            const float draggingWidth  = draggingPart * viewWidth;
+            const float draggingHeight = draggingPart * viewHeight;
 
-        bool moved   = false;
-        bool canMove = false;
-        if (s_instance->draggingViewClock.getElapsedTime() >= Variables::getViewDraggingTime()) {
-            canMove = true;
+            bool canMove = false;
+            if (s_instance->draggingViewClock.getElapsedTime() >= Variables::getViewDraggingTime()) {
+                canMove = true;
+            }
+
+            if (static_cast<float>(x) < draggingWidth) {
+                move({-Variables::getViewDraggingOffset(), 0}, canMove);
+                isMouseInsideDraggingArea = true;
+            }
+            if (static_cast<float>(x) > viewWidth - draggingWidth) {
+                move({Variables::getViewDraggingOffset(), 0}, canMove);
+                isMouseInsideDraggingArea = true;
+            }
+            if (static_cast<float>(y) < draggingHeight) {
+                move({0, -Variables::getViewDraggingOffset()}, canMove);
+                isMouseInsideDraggingArea = true;
+            }
+            if (static_cast<float>(y) > viewHeight - draggingHeight) {
+                move({0, Variables::getViewDraggingOffset()}, canMove);
+                isMouseInsideDraggingArea = true;
+            }
         }
 
-        if (static_cast<float>(x) < draggingWidth && static_cast<float>(y) > 0) {
-            move({-Variables::getViewDraggingOffset(), 0}, canMove);
-            moved = true;
-        }
-        if (static_cast<float>(x) > viewWidth - draggingWidth) {
-            move({Variables::getViewDraggingOffset(), 0}, canMove);
-            moved = true;
-        }
-        if (static_cast<float>(y) < draggingHeight && static_cast<float>(y) > 0) {
-            move({0, -Variables::getViewDraggingOffset()}, canMove);
-            moved = true;
-        }
-        if (static_cast<float>(y) > viewHeight - draggingHeight && static_cast<float>(y) < viewHeight) {
-            move({0, Variables::getViewDraggingOffset()}, canMove);
-            moved = true;
-        }
-
-        if (!moved) {
+        if (!isMouseInsideDraggingArea) {
             s_instance->draggingViewClock.restart();
         }
     }

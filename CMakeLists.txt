@@ -29,6 +29,12 @@ add_executable(main src/main.cpp
         src/globals/Settings.h
         src/interface/GridPosition.h
         src/board/BuildingType.h
+        src/interface/EconomyPanel.cpp
+        src/interface/EconomyPanel.h
+        src/EconomyState.cpp
+        src/EconomyState.h
+        src/interface/EconomyCell.cpp
+        src/interface/EconomyCell.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

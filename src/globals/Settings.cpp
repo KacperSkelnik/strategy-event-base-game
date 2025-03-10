@@ -16,7 +16,7 @@ namespace Settings {
         s_variables_instance                     = new Variables();
         s_variables_instance->spriteWidth        = 95;
         s_variables_instance->spriteHeight       = 97;
-        s_variables_instance->windowWidth        = 1200;
+        s_variables_instance->windowWidth        = 1600;
         s_variables_instance->windowHeight       = 1200;
         s_variables_instance->viewDraggingPart   = 0.05;
         s_variables_instance->viewDraggingOffset = 2;

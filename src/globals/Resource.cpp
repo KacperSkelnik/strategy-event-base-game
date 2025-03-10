@@ -55,6 +55,8 @@ namespace Resource {
         s_textures_instance->school          = sf::Texture("../assets/textures/buildings/school.png");
         s_textures_instance->tower           = sf::Texture("../assets/textures/buildings/tower.png");
         s_textures_instance->townHall        = sf::Texture("../assets/textures/buildings/town_hall.png");
+        // economy
+        s_textures_instance->gold = sf::Texture("../assets/textures/economy/gold.png");
     }
 
     void Textures::shutDown() {
@@ -123,6 +125,12 @@ namespace Resource {
         assert(s_textures_instance);
 
         return s_textures_instance->townHall;
+    }
+
+    sf::Texture& Textures::getGold() {
+        assert(s_textures_instance);
+
+        return s_textures_instance->gold;
     }
 
 } // namespace Resource

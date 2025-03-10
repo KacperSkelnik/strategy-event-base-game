@@ -8,7 +8,7 @@
 #include "SFML/Graphics/RectangleShape.hpp"
 #include <ranges>
 
-BuildingSelector::BuildingSelector(const std::span<BuildingType>& inputElements) {
+BuildingSelector::BuildingSelector(const std::initializer_list<BuildingType> inputElements) {
     using namespace Screen;
 
     const auto [centerX, centerY] = Window::getBottomView().getCenter();
