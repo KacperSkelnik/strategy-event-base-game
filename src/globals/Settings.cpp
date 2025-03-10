@@ -5,6 +5,7 @@
 #include "Settings.h"
 
 #include <cassert>
+#include <fstream>
 
 namespace Settings {
 
@@ -13,17 +14,20 @@ namespace Settings {
     void Variables::init() {
         assert(!s_variables_instance);
 
-        s_variables_instance                     = new Variables();
-        s_variables_instance->spriteWidth        = 95;
-        s_variables_instance->spriteHeight       = 97;
-        s_variables_instance->windowWidth        = 1600;
-        s_variables_instance->windowHeight       = 1200;
-        s_variables_instance->viewDraggingPart   = 0.05;
-        s_variables_instance->viewDraggingOffset = 2;
-        s_variables_instance->viewDraggingTime   = sf::seconds(0.2);
-        s_variables_instance->zoomFactor         = 0.05;
-        s_variables_instance->maxZoomsCnt        = 5;
-        s_variables_instance->minZoomsCnt        = -20;
+        std::ifstream file("../config/game.json");
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open ../config/game.json");
+        }
+
+        nlohmann::json jsonConfig;
+        try {
+            file >> jsonConfig;
+        } catch (const nlohmann::json::parse_error& e) {
+            throw std::runtime_error("Failed to parse JSON: " + std::string(e.what()));
+        }
+
+        s_variables_instance         = new Variables();
+        s_variables_instance->config = jsonConfig.get<Config>();
     }
 
     void Variables::shutDown() {
@@ -37,60 +41,60 @@ namespace Settings {
     float Variables::getSpriteWidth() {
         assert(s_variables_instance);
 
-        return s_variables_instance->spriteWidth;
+        return s_variables_instance->config.graphics.spriteWidth;
     }
 
     float Variables::getSpriteHeight() {
         assert(s_variables_instance);
 
-        return s_variables_instance->spriteHeight;
+        return s_variables_instance->config.graphics.spriteHeight;
     }
 
     unsigned Variables::getWindowWidth() {
         assert(s_variables_instance);
 
-        return s_variables_instance->windowWidth;
+        return s_variables_instance->config.window.windowWidth;
     }
 
     unsigned Variables::getWindowHeight() {
         assert(s_variables_instance);
 
-        return s_variables_instance->windowHeight;
+        return s_variables_instance->config.window.windowHeight;
     }
 
     float Variables::getViewDraggingPart() {
         assert(s_variables_instance);
 
-        return s_variables_instance->viewDraggingPart;
+        return s_variables_instance->config.view.viewDraggingPart;
     }
 
     float Variables::getViewDraggingOffset() {
         assert(s_variables_instance);
 
-        return s_variables_instance->viewDraggingOffset;
+        return s_variables_instance->config.view.viewDraggingOffset;
     }
 
     sf::Time Variables::getViewDraggingTime() {
         assert(s_variables_instance);
 
-        return s_variables_instance->viewDraggingTime;
+        return s_variables_instance->config.view.viewDraggingTime;
     }
 
     float Variables::getZoomFactor() {
         assert(s_variables_instance);
 
-        return s_variables_instance->zoomFactor;
+        return s_variables_instance->config.view.zoomFactor;
     }
 
     int Variables::getMaxZoomsCnt() {
         assert(s_variables_instance);
 
-        return s_variables_instance->maxZoomsCnt;
+        return s_variables_instance->config.view.maxZoomsCnt;
     }
 
     int Variables::getMinZoomsCnt() {
         assert(s_variables_instance);
 
-        return s_variables_instance->minZoomsCnt;
+        return s_variables_instance->config.view.minZoomsCnt;
     }
 } // namespace Settings

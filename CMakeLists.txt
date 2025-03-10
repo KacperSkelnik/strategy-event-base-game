@@ -12,6 +12,11 @@ FetchContent_Declare(SFML
         SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
+FetchContent_Declare(nlohmann
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.10.5)
+FetchContent_MakeAvailable(nlohmann)
+
 add_executable(main src/main.cpp
         src/interface/grid.cpp
         src/interface/grid.h
@@ -39,3 +44,4 @@ add_executable(main src/main.cpp
 
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE nlohmann_json)

@@ -1,0 +1,18 @@
+{
+  "graphics": {
+    "spriteWidth": 95.0,
+    "spriteHeight": 97.0
+  },
+  "window": {
+    "windowWidth": 1600,
+    "windowHeight": 1200
+  },
+  "view": {
+    "viewDraggingPart": 0.05,
+    "viewDraggingOffset": 2.0,
+    "viewDraggingTime": 0.2,
+    "zoomFactor": 0.05,
+    "maxZoomsCnt": 5,
+    "minZoomsCnt": -20
+  }
+}

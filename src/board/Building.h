@@ -10,6 +10,7 @@ class Building {
     GridPosition position;
 
   public:
+    Building() = delete;
     explicit Building(BuildingType type, GridPosition position);
     ~Building() = default;
 };
