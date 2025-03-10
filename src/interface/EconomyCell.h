@@ -14,13 +14,16 @@ class EconomyCell {
     float                 maxPlotValue;
     sf::Text              textRepresentation;
 
+    std::string economyName;
+
     void  updateValues();
     float calculateY(float value) const;
     void  updatePlot();
+    void  updateText();
 
   public:
     EconomyCell() = delete;
-    explicit EconomyCell(std::function<long()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
+    explicit EconomyCell(std::string economyName, std::function<long()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
     ~EconomyCell() = default;
 
     void update();

@@ -20,6 +20,7 @@ EconomyPanel::EconomyPanel(const EconomyState& economyState): economyState(econo
     const float elementWidth  = width - 2 * space;
 
     elements.emplace_back(
+        "Gold",
         [&]() {
             return economyState.getGold();
         },

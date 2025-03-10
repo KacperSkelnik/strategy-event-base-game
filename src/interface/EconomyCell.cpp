@@ -8,12 +8,13 @@
 #include "../globals/Screen.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 
-EconomyCell::EconomyCell(std::function<long()> economyResourceGetter, const sf::Vector2f position, const sf::Vector2f size):
+EconomyCell::EconomyCell(std::string economyName, std::function<long()> economyResourceGetter, const sf::Vector2f position, const sf::Vector2f size):
     economyResourceGetter(std::move(economyResourceGetter)),
     values {},
     plot(sf::PrimitiveType::LineStrip, values.size()),
     maxPlotValue(0),
-    textRepresentation(Resource::Fonts::getRegular()) {
+    textRepresentation(Resource::Fonts::getRegular()),
+    economyName(std::move(economyName)) {
     using namespace Resource;
 
     // Frame
@@ -25,8 +26,11 @@ EconomyCell::EconomyCell(std::function<long()> economyResourceGetter, const sf::
 
     // Text
     textRepresentation.setCharacterSize(24);
+    textRepresentation.setString(economyName + ": 0");
     textRepresentation.setFillColor(sf::Color::Black);
-    textRepresentation.setPosition({position.x + size.x / 2, position.y + size.y / 2});
+    textRepresentation.setPosition(
+        {position.x + size.x / 2, position.y + size.y / 2 + textRepresentation.getGlobalBounds().size.y / 2}
+    );
 
     // Plot
     values.fill(economyResourceGetter());
@@ -62,13 +66,17 @@ void EconomyCell::updatePlot() {
     }
 }
 
-void EconomyCell::update() {
-    updateValues();
-    updatePlot();
-    textRepresentation.setString(std::to_string(economyResourceGetter()));
+void EconomyCell::updateText() {
+    textRepresentation.setString(economyName + ": " + std::to_string(economyResourceGetter()));
     textRepresentation.setOrigin(
         {textRepresentation.getLocalBounds().size.x / 2, textRepresentation.getLocalBounds().size.y / 2}
     );
+}
+
+void EconomyCell::update() {
+    updateValues();
+    updatePlot();
+    updateText();
 }
 
 void EconomyCell::draw() const {
