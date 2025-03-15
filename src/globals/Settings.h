@@ -3,9 +3,9 @@
 #include <nlohmann/json.hpp>
 
 template <> struct nlohmann::adl_serializer<sf::Time> {
-    static void to_json(::nlohmann::json& j, const sf::Time& time) { j = time.asSeconds(); }
+    static void to_json(json& j, const sf::Time& time) { j = time.asSeconds(); }
 
-    static void from_json(const ::nlohmann::json& j, sf::Time& time) { time = sf::seconds(j.get<float>()); }
+    static void from_json(const json& j, sf::Time& time) { time = sf::seconds(j.get<float>()); }
 };
 
 namespace Settings {

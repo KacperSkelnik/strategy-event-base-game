@@ -1,6 +1,6 @@
 #pragma once
 
-typedef struct GridPosition {
+struct GridPosition {
     unsigned row;
     unsigned column;
-} GridPosition;
+};
