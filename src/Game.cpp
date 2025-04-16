@@ -4,6 +4,7 @@
 
 #include "Game.h"
 
+#include "board/events/CreateBuildingHandler.h"
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
@@ -16,9 +17,8 @@ Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     grid(Grid(32, 32)),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
-    screenCanBeDragged(false) {
-    buildings.reserve(32);
-}
+    screenCanBeDragged(false),
+    board(std::make_shared<Board>(Board())) {}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
@@ -58,8 +58,10 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
             if (selectedBuilding) {
                 const std::optional<GridPosition> maybePosition = grid.addBuilding(selectedBuilding.value(), event->position);
                 if (maybePosition) {
-                    Building building(selectedBuilding.value(), maybePosition.value());
-                    buildings.emplace_back(std::make_unique<Building>(building));
+                    const Event _event = {
+                        board, std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), maybePosition.value())
+                    };
+                    eventQueue.enqueue(std::make_shared<Event>(_event));
                 }
             }
         }

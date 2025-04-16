@@ -1,0 +1,15 @@
+#pragma once
+#include "Event.h"
+#include <queue>
+
+class EventStore final {
+  private:
+    std::queue<std::shared_ptr<Event>> events;
+
+  public:
+    EventStore()  = default;
+    ~EventStore() = default;
+
+    void                   push(const std::shared_ptr<Event>& event);
+    std::shared_ptr<Event> pop();
+};

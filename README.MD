@@ -1,3 +1,7 @@
+### Architecture
+
+- Event sourcing
+
 ### Buildings
 
 - Town Hall - storage
