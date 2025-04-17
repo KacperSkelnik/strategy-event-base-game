@@ -4,11 +4,13 @@
 
 class EventQueue final {
   private:
-    EventStore eventQueue;
+    EventStore eventStore;
 
   public:
     EventQueue()  = default;
     ~EventQueue() = default;
 
-    void enqueue(const std::shared_ptr<Event>& event);
+    void                                                push(const std::shared_ptr<Event>& event);
+    [[nodiscard]] std::optional<std::shared_ptr<Event>> front() const;
+    void                                                pop();
 };

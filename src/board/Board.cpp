@@ -4,10 +4,14 @@
 
 #include "Board.h"
 
-Board::Board() {
+Board::Board(const std::shared_ptr<Grid>& grid): grid(grid) {
     buildings.reserve(32);
 }
 
-void Board::createBuilding(const std::shared_ptr<Building>& building) {
-    buildings.emplace_back(building);
+void Board::createBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
+    const std::optional<GridPosition> maybePosition = grid->addBuilding(buildingType, position);
+    if (maybePosition) {
+        Building building(buildingType, maybePosition.value());
+        buildings.emplace_back(std::make_shared<Building>(building));
+    }
 }

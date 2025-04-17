@@ -10,6 +10,7 @@ class EventStore final {
     EventStore()  = default;
     ~EventStore() = default;
 
-    void                   push(const std::shared_ptr<Event>& event);
-    std::shared_ptr<Event> pop();
+    void                                                push(const std::shared_ptr<Event>& event);
+    [[nodiscard]] std::optional<std::shared_ptr<Event>> front() const;
+    void                                                pop();
 };

@@ -13,12 +13,14 @@
 #include <SFML/Graphics.hpp>
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
+    board(std::make_shared<Board>(Board(grid))),
     economyState(EconomyState(500)),
-    grid(Grid(32, 32)),
+    grid(std::make_shared<Grid>(Grid(32, 32))),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
     screenCanBeDragged(false),
-    board(std::make_shared<Board>(Board())) {}
+    eventQueue(std::make_shared<EventQueue>(EventQueue())),
+    eventLoop(eventQueue) {}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
@@ -56,13 +58,8 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const std::optional<GridPosition> maybePosition = grid.addBuilding(selectedBuilding.value(), event->position);
-                if (maybePosition) {
-                    const Event _event = {
-                        board, std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), maybePosition.value())
-                    };
-                    eventQueue.enqueue(std::make_shared<Event>(_event));
-                }
+                const Event _event = {board, std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position)};
+                eventQueue->push(std::make_shared<Event>(_event));
             }
         }
 
@@ -134,7 +131,7 @@ void Game::draw() const {
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    grid.draw(selectedBuilding);
+    grid->draw(selectedBuilding);
     buildingSelector.draw();
     economyPanel.draw();
 
@@ -152,6 +149,8 @@ void Game::run() {
 
     // Start the game loop
     while (Window::get().isOpen()) {
+        eventLoop.runSingle();
+
         while (const std::optional event = Window::get().pollEvent()) {
             handleEvent(event.value());
         }

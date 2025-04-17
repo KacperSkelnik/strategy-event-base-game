@@ -1,12 +1,13 @@
 #pragma once
+#include "EventQueue.h"
 
 class EventLoop {
-    private:
-        int myVariable;
-        
-    public:
-        EventLoop();
-        ~EventLoop();
-        
-        void myMethod() const;
+  private:
+    std::shared_ptr<EventQueue> eventQueue;
+
+  public:
+    explicit EventLoop(const std::shared_ptr<EventQueue>& eventQueue);
+    ~EventLoop() = default;
+
+    void runSingle() const;
 };

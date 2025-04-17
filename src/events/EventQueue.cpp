@@ -4,6 +4,14 @@
 
 #include "EventQueue.h"
 
-void EventQueue::enqueue(const std::shared_ptr<Event>& event) {
-    eventQueue.push(event);
+void EventQueue::push(const std::shared_ptr<Event>& event) {
+    eventStore.push(event);
+}
+
+std::optional<std::shared_ptr<Event>> EventQueue::front() const {
+    return eventStore.front();
+}
+
+void EventQueue::pop() {
+    eventStore.pop();
 }

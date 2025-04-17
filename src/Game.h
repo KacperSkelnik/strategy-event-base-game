@@ -2,11 +2,11 @@
 
 #include "board/Board.h"
 #include "EconomyState.h"
+#include "events/EventLoop.h"
 #include "events/EventQueue.h"
 #include "interface/BuildingSelector.h"
 #include "interface/EconomyPanel.h"
 #include "interface/Grid.h"
-#include <vector>
 
 class Game {
   private:
@@ -18,13 +18,14 @@ class Game {
     EconomyState                economyState;
 
     // Interface
-    Grid             grid;
-    BuildingSelector buildingSelector;
-    EconomyPanel     economyPanel;
-    bool             screenCanBeDragged;
+    std::shared_ptr<Grid> grid;
+    BuildingSelector      buildingSelector;
+    EconomyPanel          economyPanel;
+    bool                  screenCanBeDragged;
 
     // Events
-    EventQueue eventQueue;
+    std::shared_ptr<EventQueue> eventQueue;
+    EventLoop                   eventLoop;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);

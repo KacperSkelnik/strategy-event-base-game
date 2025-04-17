@@ -4,11 +4,10 @@
 
 #include "CreateBuildingHandler.h"
 
-CreateBuildingHandler::CreateBuildingHandler(const BuildingType selectedBuilding, const GridPosition position):
+CreateBuildingHandler::CreateBuildingHandler(BuildingType selectedBuilding, const sf::Vector2i& position):
     selectedBuilding(selectedBuilding),
     position(position) {}
 
 void CreateBuildingHandler::invoke(const std::shared_ptr<Board> target) {
-    Building building(selectedBuilding, position);
-    target->createBuilding(std::make_shared<Building>(building));
+    target->createBuilding(selectedBuilding, position);
 }
