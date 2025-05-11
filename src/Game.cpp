@@ -14,7 +14,7 @@
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     grid(std::make_shared<Grid>(32, 32)),
-    board(Board(grid)),
+    board(std::make_shared<Board>(grid)),
     economyState(EconomyState(500)),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
@@ -58,11 +58,9 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const Event _event = {
-                    std::make_shared<Board>(board),
-                    std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position)
-                };
-                eventQueue->push(std::make_shared<Event>(_event));
+                const auto handler = std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position);
+                const auto _event  = std::make_shared<Event>(board, handler);
+                eventQueue->push(_event);
             }
         }
 
@@ -152,7 +150,7 @@ void Game::run() {
 
     // Start the game loop
     while (Window::get().isOpen()) {
-        eventLoop.runSingle();
+        eventLoop.run();
 
         while (const std::optional event = Window::get().pollEvent()) {
             handleEvent(event.value());

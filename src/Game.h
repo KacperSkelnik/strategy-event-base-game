@@ -11,8 +11,8 @@
 class Game {
   private:
     // Board
-    std::shared_ptr<Grid> grid;
-    Board                 board;
+    std::shared_ptr<Grid>  grid;
+    std::shared_ptr<Board> board;
 
     // State
     std::optional<BuildingType> selectedBuilding;
