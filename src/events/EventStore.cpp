@@ -4,6 +4,8 @@
 
 #include "EventStore.h"
 
+EventStore::EventStore(): events(std::queue<std::shared_ptr<Event>>()) {}
+
 void EventStore::push(const std::shared_ptr<Event>& event) {
     events.push(event);
 }
@@ -20,4 +22,8 @@ void EventStore::pop() {
     if (!events.empty()) {
         events.pop();
     }
+}
+
+unsigned long EventStore::size() const {
+    return events.size();
 }

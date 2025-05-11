@@ -5,22 +5,22 @@
 #include "Game.h"
 
 #include "board/events/CreateBuildingHandler.h"
+#include "board/Grid.h"
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
-#include "interface/Grid.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
-    board(std::make_shared<Board>(Board(grid))),
+    grid(std::make_shared<Grid>(32, 32)),
+    board(Board(grid)),
     economyState(EconomyState(500)),
-    grid(std::make_shared<Grid>(Grid(32, 32))),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
     screenCanBeDragged(false),
-    eventQueue(std::make_shared<EventQueue>(EventQueue())),
-    eventLoop(eventQueue) {}
+    eventQueue(std::make_shared<EventQueue>()),
+    eventLoop(EventLoop(eventQueue)) {}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
@@ -32,7 +32,7 @@ Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     Fonts::init();
     Textures::init();
 
-    return Game(buildingTypes);
+    return {buildingTypes};
 }
 
 Game::~Game() {
@@ -58,7 +58,10 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const Event _event = {board, std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position)};
+                const Event _event = {
+                    std::make_shared<Board>(board),
+                    std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position)
+                };
                 eventQueue->push(std::make_shared<Event>(_event));
             }
         }

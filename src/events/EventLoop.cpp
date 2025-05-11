@@ -4,9 +4,9 @@
 
 #include "EventLoop.h"
 
-#include <iostream>
+#include <utility>
 
-EventLoop::EventLoop(const std::shared_ptr<EventQueue>& eventQueue): eventQueue(eventQueue) {}
+EventLoop::EventLoop(std::shared_ptr<EventQueue> eventQueue): eventQueue(std::move(eventQueue)) {}
 
 void EventLoop::runSingle() const {
     if (const auto optionalEvent = eventQueue->front(); optionalEvent.has_value()) {

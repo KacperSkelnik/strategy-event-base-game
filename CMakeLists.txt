@@ -18,8 +18,8 @@ FetchContent_Declare(nlohmann
 FetchContent_MakeAvailable(nlohmann)
 
 add_executable(main src/main.cpp
-        src/interface/grid.cpp
-        src/interface/grid.h
+        src/board/Grid.cpp
+        src/board/Grid.h
         src/globals/Screen.cpp
         src/globals/Screen.h
         src/globals/Resource.cpp
@@ -32,7 +32,7 @@ add_executable(main src/main.cpp
         src/board/Building.h
         src/globals/Settings.cpp
         src/globals/Settings.h
-        src/interface/GridPosition.h
+        src/board/GridPosition.h
         src/board/BuildingType.h
         src/interface/EconomyPanel.cpp
         src/interface/EconomyPanel.h

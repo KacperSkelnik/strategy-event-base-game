@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../board/BuildingType.h"
+#include "BuildingType.h"
 #include "GridPosition.h"
 #include <SFML/Graphics.hpp>
 

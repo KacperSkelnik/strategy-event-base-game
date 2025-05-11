@@ -4,7 +4,7 @@
 
 #include "CreateBuildingHandler.h"
 
-CreateBuildingHandler::CreateBuildingHandler(BuildingType selectedBuilding, const sf::Vector2i& position):
+CreateBuildingHandler::CreateBuildingHandler(const BuildingType selectedBuilding, const sf::Vector2i& position):
     selectedBuilding(selectedBuilding),
     position(position) {}
 
