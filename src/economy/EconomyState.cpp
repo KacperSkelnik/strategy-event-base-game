@@ -4,13 +4,13 @@
 
 #include "EconomyState.h"
 
-EconomyState::EconomyState(const int initialGold): goldAmount(initialGold) {}
+EconomyState::EconomyState(const long initialGold): goldAmount(initialGold) {}
 
-void EconomyState::addGold(const int amount) {
+void EconomyState::addGold(const long amount) {
     goldAmount += amount;
 }
 
-bool EconomyState::spendGold(const int amount) {
+bool EconomyState::spendGold(const long amount) {
     if (goldAmount >= amount) {
         goldAmount -= amount;
         return true;
