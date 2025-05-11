@@ -4,21 +4,23 @@
 
 #include "Game.h"
 
+#include "board/events/CreateBuildingHandler.h"
+#include "board/Grid.h"
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
-#include "interface/Grid.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
+    grid(std::make_shared<Grid>(32, 32)),
+    board(std::make_shared<Board>(grid)),
     economyState(EconomyState(500)),
-    grid(Grid(32, 32)),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(economyState),
-    screenCanBeDragged(false) {
-    buildings.reserve(32);
-}
+    screenCanBeDragged(false),
+    eventQueue(std::make_shared<EventQueue>()),
+    eventLoop(EventLoop(eventQueue)) {}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
@@ -30,7 +32,7 @@ Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     Fonts::init();
     Textures::init();
 
-    return Game(buildingTypes);
+    return {buildingTypes};
 }
 
 Game::~Game() {
@@ -56,11 +58,9 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const std::optional<GridPosition> maybePosition = grid.addBuilding(selectedBuilding.value(), event->position);
-                if (maybePosition) {
-                    Building building(selectedBuilding.value(), maybePosition.value());
-                    buildings.emplace_back(std::make_unique<Building>(building));
-                }
+                const auto handler = std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position);
+                const auto _event  = std::make_shared<Event>(board, handler);
+                eventQueue->push(_event);
             }
         }
 
@@ -132,7 +132,7 @@ void Game::draw() const {
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    grid.draw(selectedBuilding);
+    grid->draw(selectedBuilding);
     buildingSelector.draw();
     economyPanel.draw();
 
@@ -150,6 +150,8 @@ void Game::run() {
 
     // Start the game loop
     while (Window::get().isOpen()) {
+        eventLoop.run();
+
         while (const std::optional event = Window::get().pollEvent()) {
             handleEvent(event.value());
         }

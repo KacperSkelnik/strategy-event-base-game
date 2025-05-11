@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../interface/GridPosition.h"
+#include "../events/EventEntity.h"
 #include "BuildingType.h"
+#include "GridPosition.h"
 
-class Building {
+class Building final: public EventEntity {
   private:
     BuildingType type;
     bool         isSelected;
@@ -12,5 +13,5 @@ class Building {
   public:
     Building() = delete;
     explicit Building(BuildingType type, GridPosition position);
-    ~Building() = default;
+    ~Building() override = default;
 };

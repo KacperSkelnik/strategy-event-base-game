@@ -1,25 +1,31 @@
 #pragma once
 
+#include "board/Board.h"
+#include "board/Grid.h"
 #include "EconomyState.h"
+#include "events/EventLoop.h"
+#include "events/EventQueue.h"
 #include "interface/BuildingSelector.h"
 #include "interface/EconomyPanel.h"
-#include "interface/Grid.h"
-#include <vector>
 
 class Game {
   private:
     // Board
-    std::vector<std::unique_ptr<Building>> buildings;
+    std::shared_ptr<Grid>  grid;
+    std::shared_ptr<Board> board;
 
     // State
     std::optional<BuildingType> selectedBuilding;
     EconomyState                economyState;
 
     // Interface
-    Grid             grid;
     BuildingSelector buildingSelector;
     EconomyPanel     economyPanel;
     bool             screenCanBeDragged;
+
+    // Events
+    std::shared_ptr<EventQueue> eventQueue;
+    EventLoop                   eventLoop;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);

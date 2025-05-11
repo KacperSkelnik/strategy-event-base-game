@@ -18,8 +18,8 @@ FetchContent_Declare(nlohmann
 FetchContent_MakeAvailable(nlohmann)
 
 add_executable(main src/main.cpp
-        src/interface/grid.cpp
-        src/interface/grid.h
+        src/board/Grid.cpp
+        src/board/Grid.h
         src/globals/Screen.cpp
         src/globals/Screen.h
         src/globals/Resource.cpp
@@ -32,7 +32,7 @@ add_executable(main src/main.cpp
         src/board/Building.h
         src/globals/Settings.cpp
         src/globals/Settings.h
-        src/interface/GridPosition.h
+        src/board/GridPosition.h
         src/board/BuildingType.h
         src/interface/EconomyPanel.cpp
         src/interface/EconomyPanel.h
@@ -40,6 +40,22 @@ add_executable(main src/main.cpp
         src/EconomyState.h
         src/interface/EconomyCell.cpp
         src/interface/EconomyCell.h
+        src/events/Event.h
+        src/events/EventQueue.cpp
+        src/events/EventQueue.h
+        src/events/EventStore.cpp
+        src/events/EventStore.h
+        src/events/EventEntity.cpp
+        src/events/EventEntity.h
+        src/events/EventHandler.cpp
+        src/events/EventHandler.h
+        src/events/Event.cpp
+        src/board/Board.cpp
+        src/board/Board.h
+        src/board/events/CreateBuildingHandler.cpp
+        src/board/events/CreateBuildingHandler.h
+        src/events/EventLoop.cpp
+        src/events/EventLoop.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)
