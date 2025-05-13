@@ -1,15 +1,17 @@
 #pragma once
 
-class EconomyState {
+#include "../events/EventEntity.h"
+
+class EconomyState final: public EventEntity {
   private:
-    long goldAmount;
+    int goldAmount = 0;
 
   public:
-    EconomyState() = default;
+    EconomyState() = delete;
     explicit EconomyState(int initialGold);
-    ~EconomyState() = default;
+    ~EconomyState() override = default;
 
     void               addGold(int amount);
     [[nodiscard]] bool spendGold(int amount); // iif goldAmount >= amount: true else false
-    [[nodiscard]] long getGold() const;
+    [[nodiscard]] int  getGold() const;
 };

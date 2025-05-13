@@ -6,6 +6,7 @@
 
 #include "board/events/CreateBuildingHandler.h"
 #include "board/Grid.h"
+#include "economy/events/SpendResourceHandler.h"
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
@@ -15,9 +16,9 @@
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     grid(std::make_shared<Grid>(32, 32)),
     board(std::make_shared<Board>(grid)),
-    economyState(EconomyState(500)),
+    economyState(std::make_shared<EconomyState>(500)),
     buildingSelector(BuildingSelector(buildingTypes)),
-    economyPanel(economyState),
+    economyPanel(EconomyPanel(economyState)),
     screenCanBeDragged(false),
     eventQueue(std::make_shared<EventQueue>()),
     eventLoop(EventLoop(eventQueue)) {}
@@ -58,9 +59,11 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const auto handler = std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position);
-                const auto _event  = std::make_shared<Event>(board, handler);
-                eventQueue->push(_event);
+                const auto buildingHandler = std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position);
+                const auto resourceHandler = std::make_shared<SpendResourceHandler>(Gold, 50);
+
+                eventQueue->push(std::make_shared<Event>(board, buildingHandler));
+                eventQueue->push(std::make_shared<Event>(economyState, resourceHandler));
             }
         }
 

@@ -2,7 +2,7 @@
 
 #include "board/Board.h"
 #include "board/Grid.h"
-#include "EconomyState.h"
+#include "economy/EconomyState.h"
 #include "events/EventLoop.h"
 #include "events/EventQueue.h"
 #include "interface/BuildingSelector.h"
@@ -15,8 +15,8 @@ class Game {
     std::shared_ptr<Board> board;
 
     // State
-    std::optional<BuildingType> selectedBuilding;
-    EconomyState                economyState;
+    std::optional<BuildingType>   selectedBuilding;
+    std::shared_ptr<EconomyState> economyState;
 
     // Interface
     BuildingSelector buildingSelector;

@@ -36,8 +36,8 @@ add_executable(main src/main.cpp
         src/board/BuildingType.h
         src/interface/EconomyPanel.cpp
         src/interface/EconomyPanel.h
-        src/EconomyState.cpp
-        src/EconomyState.h
+        src/economy/EconomyState.cpp
+        src/economy/EconomyState.h
         src/interface/EconomyCell.cpp
         src/interface/EconomyCell.h
         src/events/Event.h
@@ -56,6 +56,9 @@ add_executable(main src/main.cpp
         src/board/events/CreateBuildingHandler.h
         src/events/EventLoop.cpp
         src/events/EventLoop.h
+        src/economy/events/SpendResourceHandler.cpp
+        src/economy/events/SpendResourceHandler.h
+        src/economy/EconomyResource.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

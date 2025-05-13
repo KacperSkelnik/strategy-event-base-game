@@ -7,12 +7,12 @@
 
 class EconomyCell {
   private:
-    std::function<long()> economyResourceGetter;
-    std::array<long, 250> values;
-    sf::RectangleShape    background;
-    sf::VertexArray       plot;
-    float                 maxPlotValue;
-    sf::Text              textRepresentation;
+    std::function<int()> economyResourceGetter;
+    std::array<int, 250> values;
+    sf::RectangleShape   background;
+    sf::VertexArray      plot;
+    float                maxPlotValue;
+    sf::Text             textRepresentation;
 
     std::string economyName;
 
@@ -23,7 +23,7 @@ class EconomyCell {
 
   public:
     EconomyCell() = delete;
-    explicit EconomyCell(std::string economyName, std::function<long()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
+    explicit EconomyCell(std::string economyName, std::function<int()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
     ~EconomyCell() = default;
 
     void update();

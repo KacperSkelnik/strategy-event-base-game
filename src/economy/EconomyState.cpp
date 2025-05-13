@@ -18,6 +18,6 @@ bool EconomyState::spendGold(const int amount) {
     return false;
 }
 
-long EconomyState::getGold() const {
+int EconomyState::getGold() const {
     return goldAmount;
 }

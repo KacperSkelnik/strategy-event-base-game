@@ -6,7 +6,7 @@
 #include "../globals/Resource.h"
 #include "../globals/Screen.h"
 
-EconomyPanel::EconomyPanel(const EconomyState& economyState): economyState(economyState) {
+EconomyPanel::EconomyPanel(const std::shared_ptr<EconomyState>& economyState): economyState(economyState) {
     using namespace Screen;
     using namespace Resource;
 
@@ -22,7 +22,7 @@ EconomyPanel::EconomyPanel(const EconomyState& economyState): economyState(econo
     elements.emplace_back(
         "Gold",
         [&]() {
-            return economyState.getGold();
+            return economyState->getGold();
         },
         sf::Vector2f {basePositionX + space, basePositionY + space},
         sf::Vector2f {elementWidth, elementHeight}
