@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../events/EventHandler.h";
+#include "../../events/EventHandler.h"
 #include "../EconomyResource.h";
 #include "../EconomyState.h";
 
