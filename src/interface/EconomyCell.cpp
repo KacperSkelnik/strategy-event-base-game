@@ -8,7 +8,7 @@
 #include "../globals/Screen.h"
 #include "SFML/Graphics/RectangleShape.hpp"
 
-EconomyCell::EconomyCell(std::string economyName, std::function<long()> economyResourceGetter, const sf::Vector2f position, const sf::Vector2f size):
+EconomyCell::EconomyCell(std::string economyName, std::function<int()> economyResourceGetter, const sf::Vector2f position, const sf::Vector2f size):
     economyResourceGetter(std::move(economyResourceGetter)),
     values {},
     plot(sf::PrimitiveType::LineStrip, values.size()),

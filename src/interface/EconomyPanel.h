@@ -9,7 +9,7 @@ class EconomyPanel {
 
   public:
     EconomyPanel() = delete;
-    explicit EconomyPanel(std::shared_ptr<EconomyState> economyState);
+    explicit EconomyPanel(const std::shared_ptr<EconomyState>& economyState);
     ~EconomyPanel() = default;
 
     void update();

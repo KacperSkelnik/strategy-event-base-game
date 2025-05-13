@@ -6,7 +6,7 @@
 #include "../globals/Resource.h"
 #include "../globals/Screen.h"
 
-EconomyPanel::EconomyPanel(std::shared_ptr<EconomyState> economyState): economyState(std::move(economyState)) {
+EconomyPanel::EconomyPanel(const std::shared_ptr<EconomyState>& economyState): economyState(economyState) {
     using namespace Screen;
     using namespace Resource;
 

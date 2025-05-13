@@ -7,10 +7,10 @@
 class SpendResourceHandler final: public EventHandler<EconomyState> {
   private:
     EconomyResource resource;
-    long            amount;
+    int             amount;
 
   public:
-    explicit SpendResourceHandler(EconomyResource resource, long amount);
+    explicit SpendResourceHandler(EconomyResource resource, int amount);
     ~SpendResourceHandler() override = default;
 
     void invoke(std::shared_ptr<EconomyState> target) override;

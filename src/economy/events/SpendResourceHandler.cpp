@@ -4,7 +4,7 @@
 
 #include "SpendResourceHandler.h"
 
-SpendResourceHandler::SpendResourceHandler(const EconomyResource resource, const long amount):
+SpendResourceHandler::SpendResourceHandler(const EconomyResource resource, const int amount):
     resource(resource),
     amount(amount) {}
 
