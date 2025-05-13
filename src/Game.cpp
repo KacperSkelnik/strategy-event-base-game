@@ -16,7 +16,7 @@
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     grid(std::make_shared<Grid>(32, 32)),
     board(std::make_shared<Board>(grid)),
-    economyState(std::make_shared<EconomyState>(500l)),
+    economyState(std::make_shared<EconomyState>(500)),
     buildingSelector(BuildingSelector(buildingTypes)),
     economyPanel(EconomyPanel(economyState)),
     screenCanBeDragged(false),
