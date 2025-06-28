@@ -21,6 +21,7 @@ namespace Resource {
         // environment
         sf::Texture grass;
         sf::Texture ground;
+        sf::Texture goldRock;
         // buildings
         sf::Texture farm;
         sf::Texture goldMine;
@@ -32,6 +33,8 @@ namespace Resource {
         sf::Texture townHall;
         // economy
         sf::Texture gold;
+        // characters
+        sf::Texture serf;
 
       public:
         Textures()  = default;
@@ -41,6 +44,7 @@ namespace Resource {
         // environment
         static sf::Texture& getGrass();
         static sf::Texture& getGround();
+        static sf::Texture& getGoldRock();
         // buildings
         static sf::Texture& getFarm();
         static sf::Texture& getGoldMine();
@@ -52,5 +56,7 @@ namespace Resource {
         static sf::Texture& getTownHall();
         // economy
         static sf::Texture& getGold();
+        // characters
+        static sf::Texture& getSerf();
     };
 } // namespace Resource

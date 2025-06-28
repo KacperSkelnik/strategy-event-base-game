@@ -7,11 +7,13 @@
 #include "board/events/CreateBuildingHandler.h"
 #include "board/Grid.h"
 #include "economy/events/SpendResourceHandler.h"
+#include "globals/Random.h"
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <thread>
 
 Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     grid(std::make_shared<Grid>(32, 32)),
@@ -21,17 +23,19 @@ Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     economyPanel(EconomyPanel(economyState)),
     screenCanBeDragged(false),
     eventQueue(std::make_shared<EventQueue>()),
-    eventLoop(EventLoop(eventQueue)) {}
+    eventLoop(EventLoop(eventQueue, economyState)) {}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
     using namespace Screen;
     using namespace Resource;
+    using namespace Random;
 
     Variables::init();
     Window::init(Variables::getWindowWidth(), Variables::getWindowHeight());
     Fonts::init();
     Textures::init();
+    RandomGenerator::init();
 
     return {buildingTypes};
 }
@@ -40,11 +44,13 @@ Game::~Game() {
     using namespace Settings;
     using namespace Screen;
     using namespace Resource;
+    using namespace Random;
 
     Variables::shutDown();
     Window::shutDown();
     Fonts::shutDown();
     Textures::shutDown();
+    RandomGenerator::shutDown();
 }
 
 void Game::onClose() {
@@ -58,12 +64,9 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
 
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
-            if (selectedBuilding) {
-                const auto buildingHandler = std::make_shared<CreateBuildingHandler>(selectedBuilding.value(), event->position);
-                const auto resourceHandler = std::make_shared<SpendResourceHandler>(Gold, 50);
-
-                eventQueue->push(std::make_shared<Event>(board, buildingHandler));
-                eventQueue->push(std::make_shared<Event>(economyState, resourceHandler));
+            if (selectedBuilding && economyState->canAfford(50)) {
+                auto params = CreateBuildingParams {selectedBuilding.value(), event->position};
+                eventQueue->push(std::make_shared<Event>(board, CreateBuilding, params));
             }
         }
 
@@ -143,18 +146,26 @@ void Game::draw() const {
     Window::get().display();
 }
 
-void Game::run() {
+void Game::runEventLoop() const {
     using namespace Screen;
+
+    while (Window::get().isOpen()) {
+        eventLoop.run();
+    }
+}
+
+void Game::run() {
     using namespace Resource;
+    using namespace Screen;
 
     sf::Text text(Fonts::getRegular());
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
 
-    // Start the game loop
-    while (Window::get().isOpen()) {
-        eventLoop.run();
+    std::thread eventLoopThread(&Game::runEventLoop, this);
+    eventLoopThread.detach();
 
+    while (Window::get().isOpen()) {
         while (const std::optional event = Window::get().pollEvent()) {
             handleEvent(event.value());
         }

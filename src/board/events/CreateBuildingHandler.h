@@ -1,16 +1,16 @@
 #pragma once
 
 #include "../../events/EventHandler.h"
+#include "../../events/EventParams.h"
 #include "../Board.h"
 #include <memory>
 
 class CreateBuildingHandler final: public EventHandler<Board> {
   private:
-    BuildingType selectedBuilding;
-    sf::Vector2i position;
+    CreateBuildingParams params;
 
   public:
-    explicit CreateBuildingHandler(BuildingType selectedBuilding, const sf::Vector2i& position);
+    explicit CreateBuildingHandler(const CreateBuildingParams& params);
     ~CreateBuildingHandler() override = default;
 
     void invoke(std::shared_ptr<Board> target) override;

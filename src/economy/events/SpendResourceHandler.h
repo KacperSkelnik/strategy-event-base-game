@@ -1,16 +1,16 @@
 #pragma once
 
 #include "../../events/EventHandler.h"
-#include "../EconomyResource.h";
-#include "../EconomyState.h";
+#include "../../events/EventParams.h"
+#include "../EconomyResource.h"
+#include "../EconomyState.h"
 
 class SpendResourceHandler final: public EventHandler<EconomyState> {
   private:
-    EconomyResource resource;
-    int             amount;
+    SpendResourceParams params;
 
   public:
-    explicit SpendResourceHandler(EconomyResource resource, int amount);
+    explicit SpendResourceHandler(SpendResourceParams params);
     ~SpendResourceHandler() override = default;
 
     void invoke(std::shared_ptr<EconomyState> target) override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BuildingType.h"
+#include "EnvironmentType.h"
 #include "GridPosition.h"
 #include <SFML/Graphics.hpp>
 
@@ -11,12 +12,14 @@ class Grid {
     float            jX = -1;
     float            jY = 0.57;
     unsigned         cols, rows;
-    std::vector<int> grid; // state of occupied cells. 0 = empty, bigger something else
+    std::vector<int> buildingsGrid; // state of occupied cells. 0 = empty, bigger something else
+    std::vector<int> environmentGrid;
 
     [[nodiscard]] static sf::priv::Vector4<float> invertMatrix(sf::priv::Vector4<float> matrix);
     [[nodiscard]] sf::Vector2u                    getGridPosition(float posX, float posY) const;
     [[nodiscard]] sf::Vector2f                    getScreenPosition(unsigned col, unsigned row) const;
     [[nodiscard]] BuildingType                    getBuildingFrom(unsigned col, unsigned row) const;
+    [[nodiscard]] EnvironmentType                 getEnvironmentFrom(unsigned col, unsigned row) const;
     [[nodiscard]] static sf::Vector2f             getBuildingPosition(BuildingType building, sf::Vector2f position);
 
   public:

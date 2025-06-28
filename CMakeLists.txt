@@ -43,11 +43,8 @@ add_executable(main src/main.cpp
         src/events/Event.h
         src/events/EventQueue.cpp
         src/events/EventQueue.h
-        src/events/EventStore.cpp
-        src/events/EventStore.h
         src/events/EventEntity.cpp
         src/events/EventEntity.h
-        src/events/EventHandler.cpp
         src/events/EventHandler.h
         src/events/Event.cpp
         src/board/Board.cpp
@@ -59,6 +56,15 @@ add_executable(main src/main.cpp
         src/economy/events/SpendResourceHandler.cpp
         src/economy/events/SpendResourceHandler.h
         src/economy/EconomyResource.h
+        src/globals/Random.cpp
+        src/globals/Random.h
+        src/characters/events/CreateCharacterHandler.cpp
+        src/characters/events/CreateCharacterHandler.h
+        src/characters/Character.cpp
+        src/characters/Character.h
+        src/characters/CharacterType.h
+        src/characters/events/SerfStateHandler.h
+        src/events/EventParams.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

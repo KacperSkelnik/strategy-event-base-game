@@ -4,12 +4,27 @@
 
 #include "Grid.h"
 
+#include "../globals/Random.h"
 #include "../globals/Resource.h"
 #include "../globals/Screen.h"
 #include "../globals/Settings.h"
 
 Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
-    grid = std::vector(cols * rows, 0);
+    using namespace Random;
+
+    // Buildings occupation
+    buildingsGrid = std::vector(cols * rows, 0);
+
+    //  Environment occupation
+    environmentGrid.reserve(cols * rows);
+    for (unsigned i = 0; i < cols * rows; ++i) {
+        float randomValue = RandomGenerator::getFloat(0, 1);
+        if (randomValue < 0.05f) {
+            environmentGrid[i] = GoldRock;
+        } else {
+            environmentGrid[i] = Grass;
+        }
+    }
 }
 
 sf::priv::Vector4<float> Grid::invertMatrix(const sf::priv::Vector4<float> matrix) {
@@ -47,7 +62,11 @@ sf::Vector2f Grid::getScreenPosition(const unsigned col, const unsigned row) con
 }
 
 BuildingType Grid::getBuildingFrom(const unsigned col, const unsigned row) const {
-    return static_cast<BuildingType>(grid[col + row * cols]);
+    return static_cast<BuildingType>(buildingsGrid[col + row * cols]);
+}
+
+EnvironmentType Grid::getEnvironmentFrom(const unsigned col, const unsigned row) const {
+    return static_cast<EnvironmentType>(environmentGrid[col + row * cols]);
 }
 
 sf::Vector2f Grid::getBuildingPosition(const BuildingType building, const sf::Vector2f position) {
@@ -83,7 +102,8 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             const bool   isOccupied = isCellOccupied(i, j);
             sf::Vector2f position   = getScreenPosition(i, j);
 
-            sf::Sprite                sprite(Textures::getGrass());
+            const EnvironmentType     environment = getEnvironmentFrom(i, j);
+            sf::Sprite                sprite(getEnvironmentTexture(environment));
             std::optional<sf::Sprite> buildingToBuildSprite = std::nullopt;
             if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() == j) {
                 position.y += -Variables::getSpriteHeight() * 0.1f;
@@ -117,7 +137,7 @@ bool Grid::isCellOccupied(const unsigned col, const unsigned row) const {
     }
 
     // Cells occupation
-    if (grid[col + row * cols]) {
+    if (buildingsGrid[col + row * cols]) {
         return true;
     }
 
@@ -131,9 +151,14 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
     Window::mainViewFocus();
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
     const auto [col, row]            = getGridPosition(worldPosition.x, worldPosition.y);
-    if (!isCellOccupied(col, row)) {
-        grid[col + row * cols] = buildingType;
-        GridPosition gridPos   = {row, col};
+
+    const bool                           isOccupied          = isCellOccupied(col, row);
+    const std::optional<EnvironmentType> requiredEnvironment = getRequiredEnvironment(buildingType);
+    const EnvironmentType                cellsEnvironment    = getEnvironmentFrom(col, row);
+
+    if (!isOccupied && (!requiredEnvironment.has_value() || cellsEnvironment == requiredEnvironment.value())) {
+        buildingsGrid[col + row * cols] = buildingType;
+        GridPosition gridPos            = {row, col};
         return gridPos;
     }
     return std::nullopt;

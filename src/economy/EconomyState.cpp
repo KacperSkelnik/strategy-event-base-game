@@ -21,3 +21,7 @@ bool EconomyState::spendGold(const int amount) {
 int EconomyState::getGold() const {
     return goldAmount;
 }
+
+bool EconomyState::canAfford(const int amount) const {
+    return goldAmount >= amount;
+}

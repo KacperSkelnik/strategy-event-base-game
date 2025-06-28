@@ -1,17 +1,18 @@
 #pragma once
 #include "Event.h"
-#include "EventStore.h"
+#include <map>
+
+typedef std::map<std::shared_ptr<EventEntity>, std::shared_ptr<Event>> Storage;
 
 class EventQueue final {
   private:
-    EventStore eventStore;
+    Storage    events;
+    std::mutex mutex;
 
   public:
     EventQueue();
     ~EventQueue() = default;
 
     void                                                push(const std::shared_ptr<Event>& event);
-    [[nodiscard]] std::optional<std::shared_ptr<Event>> front() const;
-    void                                                pop();
-    [[nodiscard]] unsigned long                         size() const;
+    [[nodiscard]] std::optional<std::shared_ptr<Event>> pop();
 };

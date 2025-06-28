@@ -34,6 +34,7 @@ class Game {
 
     void handleEvent(const sf::Event& event);
     void draw() const;
+    void runEventLoop() const;
 
     Game(std::initializer_list<BuildingType> buildingTypes);
 
