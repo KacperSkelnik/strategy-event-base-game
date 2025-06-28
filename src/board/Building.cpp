@@ -4,5 +4,4 @@
 
 #include "Building.h"
 
-Building::Building(const BuildingType type, const GridPosition position):
-    type(type), isSelected(true), position(position) {}
+Building::Building(const BuildingType type, const GridPosition position): type(type), position(position) {}

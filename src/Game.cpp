@@ -64,9 +64,12 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
 
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
-            if (selectedBuilding && economyState->canAfford(50)) {
+            if (selectedBuilding) {
                 auto params = CreateBuildingParams {selectedBuilding.value(), event->position};
                 eventQueue->push(std::make_shared<Event>(board, CreateBuilding, params));
+            }
+
+            else if (board->trySelectBuilding(event->position)) {
             }
         }
 

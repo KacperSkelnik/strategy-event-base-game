@@ -6,6 +6,6 @@
 
 CreateBuildingHandler::CreateBuildingHandler(const CreateBuildingParams& params): params(params) {}
 
-void CreateBuildingHandler::invoke(const std::shared_ptr<Board> target) {
-    target->createBuilding(params.selectedBuilding, params.position);
+bool CreateBuildingHandler::invoke(const std::shared_ptr<Board> target) {
+    return target->createBuilding(params.selectedBuilding, params.position);
 }

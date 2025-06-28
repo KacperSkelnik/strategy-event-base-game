@@ -43,7 +43,6 @@ add_executable(main src/main.cpp
         src/events/Event.h
         src/events/EventQueue.cpp
         src/events/EventQueue.h
-        src/events/EventEntity.cpp
         src/events/EventEntity.h
         src/events/EventHandler.h
         src/events/Event.cpp

@@ -163,3 +163,15 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
     }
     return std::nullopt;
 }
+
+std::optional<sf::Sprite> Grid::getBuildingSprite(const GridPosition& position) const {
+    if (isCellOccupied(position.column, position.row)) {
+        const BuildingType building = getBuildingFrom(position.column, position.row);
+        sf::Sprite         buildingSprite(getBuildingsTexture(building));
+        const sf::Vector2f screenPosition = getScreenPosition(position.column, position.row);
+        buildingSprite.setPosition(getBuildingPosition(building, screenPosition));
+
+        return buildingSprite;
+    }
+    return std::nullopt;
+}

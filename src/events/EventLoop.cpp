@@ -16,17 +16,19 @@ void EventLoop::run() const {
     while (event.has_value()) {
         switch (event.value()->getEventType()) {
             case CreateBuilding: {
-                auto params = event.value()->getEventParams<CreateBuildingParams>();
-                CreateBuildingHandler(params).invokeBase(event.value()->getTarget());
+                const auto params  = event.value()->getEventParams<CreateBuildingParams>();
+                const bool success = CreateBuildingHandler(params).invokeOn(event.value()->getTarget());
 
-                auto spendParams = SpendResourceParams {Gold, 50};
-                eventQueue->push(std::make_shared<Event>(economyState, SpendResource, spendParams));
+                if (success) {
+                    const auto spendParams = SpendResourceParams {Gold, 50};
+                    eventQueue->push(std::make_shared<Event>(economyState, SpendResource, spendParams));
+                }
                 break;
             }
 
             case SpendResource: {
                 auto params = event.value()->getEventParams<SpendResourceParams>();
-                SpendResourceHandler(params).invokeBase(event.value()->getTarget());
+                SpendResourceHandler(params).invokeOn(event.value()->getTarget());
                 break;
             }
 

@@ -30,4 +30,5 @@ class Grid {
     void                                      draw(const std::optional<BuildingType>& maybeSelectedBuilding) const;
     [[nodiscard]] bool                        isCellOccupied(unsigned col, unsigned row) const;
     [[nodiscard]] std::optional<GridPosition> addBuilding(BuildingType buildingType, const sf::Vector2i& position);
+    [[nodiscard]] std::optional<sf::Sprite>   getBuildingSprite(const GridPosition& position) const;
 };

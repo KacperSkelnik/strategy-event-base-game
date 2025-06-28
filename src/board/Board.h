@@ -12,5 +12,6 @@ class Board final: public EventEntity {
     explicit Board(std::shared_ptr<Grid> grid);
     ~Board() override = default;
 
-    void createBuilding(BuildingType buildingType, const sf::Vector2i& position);
+    bool                                     createBuilding(BuildingType buildingType, const sf::Vector2i& position);
+    std::optional<std::shared_ptr<Building>> trySelectBuilding(const sf::Vector2i& mousePosition) const;
 };

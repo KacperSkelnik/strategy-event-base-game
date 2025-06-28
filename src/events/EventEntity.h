@@ -5,6 +5,5 @@
  */
 class EventEntity {
   public:
-    EventEntity()          = default;
     virtual ~EventEntity() = default;
 };
