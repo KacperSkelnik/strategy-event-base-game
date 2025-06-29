@@ -3,12 +3,12 @@
 //
 #include "Event.h"
 
-Event::Event(const std::shared_ptr<EventEntity>& target, const EventType eventType, const EventParams eventPrams):
+Event::Event(const std::shared_ptr<EventEntity>& target, const EventType eventType, const EventParams eventParams):
     target(target),
     eventType(eventType),
-    eventPrams(eventPrams) {}
+    eventParams(eventParams) {}
 
 Event::Event(const std::shared_ptr<EventEntity>& target, const EventType eventType):
     target(target),
     eventType(eventType),
-    eventPrams(std::nullopt) {}
+    eventParams(std::nullopt) {}
