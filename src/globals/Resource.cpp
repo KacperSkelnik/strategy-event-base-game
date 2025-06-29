@@ -17,7 +17,7 @@ namespace Resource {
 
         s_fonts_instance = new Fonts();
 
-        s_fonts_instance->regular = sf::Font("/Users/kacperskelnik/CLionProjects/tower-defense/assets/Prater Sans Regular.otf");
+        s_fonts_instance->regular = sf::Font("../assets/Prater Sans Regular.otf");
     }
 
     void Fonts::shutDown() {
