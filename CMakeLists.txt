@@ -28,12 +28,12 @@ add_executable(main src/main.cpp
         src/Game.h
         src/interface/BuildingSelector.cpp
         src/interface/BuildingSelector.h
-        src/board/Building.cpp
-        src/board/Building.h
+        src/board/buildings/Building.cpp
+        src/board/buildings/Building.h
         src/globals/Settings.cpp
         src/globals/Settings.h
         src/board/GridPosition.h
-        src/board/BuildingType.h
+        src/board/buildings/BuildingType.h
         src/interface/EconomyPanel.cpp
         src/interface/EconomyPanel.h
         src/economy/EconomyState.cpp
@@ -43,22 +43,28 @@ add_executable(main src/main.cpp
         src/events/Event.h
         src/events/EventQueue.cpp
         src/events/EventQueue.h
-        src/events/EventStore.cpp
-        src/events/EventStore.h
-        src/events/EventEntity.cpp
         src/events/EventEntity.h
-        src/events/EventHandler.cpp
         src/events/EventHandler.h
         src/events/Event.cpp
         src/board/Board.cpp
         src/board/Board.h
-        src/board/events/CreateBuildingHandler.cpp
-        src/board/events/CreateBuildingHandler.h
+        src/board/buildings/events/CreateBuildingHandler.cpp
+        src/board/buildings/events/CreateBuildingHandler.h
         src/events/EventLoop.cpp
         src/events/EventLoop.h
         src/economy/events/SpendResourceHandler.cpp
         src/economy/events/SpendResourceHandler.h
         src/economy/EconomyResource.h
+        src/globals/Random.cpp
+        src/globals/Random.h
+        src/board/characters/events/CreateCharacterHandler.cpp
+        src/board/characters/events/CreateCharacterHandler.h
+        src/board/characters/Character.cpp
+        src/board/characters/Character.h
+        src/board/characters/CharacterType.h
+        src/board/characters/events/SerfStateHandler.h
+        src/events/EventParams.h
+        src/board/OccupationType.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

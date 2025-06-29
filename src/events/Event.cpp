@@ -3,10 +3,12 @@
 //
 #include "Event.h"
 
-Event::Event(const std::shared_ptr<EventEntity>& target, const std::shared_ptr<IEventHandler>& eventHandler):
+Event::Event(const std::shared_ptr<EventEntity>& target, const EventType eventType, const EventParams eventParams):
     target(target),
-    eventHandler(eventHandler) {}
+    eventType(eventType),
+    eventParams(eventParams) {}
 
-void Event::execute() const {
-    eventHandler->invokeBase(target);
-}
+Event::Event(const std::shared_ptr<EventEntity>& target, const EventType eventType):
+    target(target),
+    eventType(eventType),
+    eventParams(std::nullopt) {}

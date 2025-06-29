@@ -14,4 +14,6 @@ class EconomyState final: public EventEntity {
     void               addGold(int amount);
     [[nodiscard]] bool spendGold(int amount); // iif goldAmount >= amount: true else false
     [[nodiscard]] int  getGold() const;
+
+    [[nodiscard]] bool canAfford(int amount) const;
 };

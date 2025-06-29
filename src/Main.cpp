@@ -3,13 +3,13 @@
 int main() {
     Game game = Game::create({
         TownHall,
-        School,
-        Farm,
+        // School,
+        // Farm,
         GoldMine,
-        Quarry,
-        LumberjackHouse,
-        SawMill,
-        Tower,
+        // Quarry,
+        // LumberjackHouse,
+        // SawMill,
+        // Tower,
     });
     game.run();
 }

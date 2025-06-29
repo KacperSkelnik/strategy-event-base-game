@@ -44,8 +44,9 @@ namespace Resource {
         s_textures_instance = new Textures();
 
         // environment
-        s_textures_instance->grass  = sf::Texture("../assets/textures/environment/grass.png");
-        s_textures_instance->ground = sf::Texture("../assets/textures/environment/ground.png");
+        s_textures_instance->grass    = sf::Texture("../assets/textures/environment/grass.png");
+        s_textures_instance->ground   = sf::Texture("../assets/textures/environment/ground.png");
+        s_textures_instance->goldRock = sf::Texture("../assets/textures/environment/gold.png");
         // buildings
         s_textures_instance->farm            = sf::Texture("../assets/textures/buildings/farm.png");
         s_textures_instance->goldMine        = sf::Texture("../assets/textures/buildings/gold_mine.png");
@@ -57,6 +58,8 @@ namespace Resource {
         s_textures_instance->townHall        = sf::Texture("../assets/textures/buildings/town_hall.png");
         // economy
         s_textures_instance->gold = sf::Texture("../assets/textures/economy/gold.png");
+        // characters
+        s_textures_instance->serf = sf::Texture("../assets/textures/characters/serf.png");
     }
 
     void Textures::shutDown() {
@@ -77,6 +80,12 @@ namespace Resource {
         assert(s_textures_instance);
 
         return s_textures_instance->ground;
+    }
+
+    sf::Texture& Textures::getGoldRock() {
+        assert(s_textures_instance);
+
+        return s_textures_instance->goldRock;
     }
 
     sf::Texture& Textures::getFarm() {
@@ -131,6 +140,12 @@ namespace Resource {
         assert(s_textures_instance);
 
         return s_textures_instance->gold;
+    }
+
+    sf::Texture& Textures::getSerf() {
+        assert(s_textures_instance);
+
+        return s_textures_instance->serf;
     }
 
 } // namespace Resource

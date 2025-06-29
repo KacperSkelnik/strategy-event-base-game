@@ -4,14 +4,13 @@
 
 #include "SpendResourceHandler.h"
 
-SpendResourceHandler::SpendResourceHandler(const EconomyResource resource, const int amount):
-    resource(resource),
-    amount(amount) {}
+SpendResourceHandler::SpendResourceHandler(const SpendResourceParams params): params(params) {}
 
-void SpendResourceHandler::invoke(const std::shared_ptr<EconomyState> target) {
-    switch (resource) {
+bool SpendResourceHandler::invoke(const std::shared_ptr<EconomyState> target) {
+    bool succeeded = false;
+    switch (params.resource) {
         case Gold:
-            target->spendGold(amount);
-            break;
+            succeeded = target->spendGold(params.amount);
     }
+    return succeeded;
 }

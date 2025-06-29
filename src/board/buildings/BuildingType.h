@@ -1,23 +1,23 @@
 #pragma once
 
-#include "../globals/Resource.h"
+#include "../../globals/Resource.h"
+#include "../EnvironmentType.h"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <optional>
 
 typedef enum BuildingType {
-    None,
-    TownHall,
-    School,
-    Farm,
-    GoldMine,
-    Quarry,
-    LumberjackHouse,
-    SawMill,
-    Tower,
+    TownHall        = 1,
+    School          = 2,
+    Farm            = 3,
+    GoldMine        = 4,
+    Quarry          = 5,
+    LumberjackHouse = 6,
+    SawMill         = 7,
+    Tower           = 8,
 } BuildingType;
 
-inline sf::Texture& getBuildingsTexture(const BuildingType type) {
+inline sf::Texture& getBuildingTexture(const BuildingType type) {
     using namespace Resource;
 
     switch (type) {
@@ -42,29 +42,10 @@ inline sf::Texture& getBuildingsTexture(const BuildingType type) {
     }
 }
 
-inline sf::Vector2i getBuildingsCells(const BuildingType type) {
+inline std::optional<EnvironmentType> getRequiredEnvironment(const BuildingType type) {
     switch (type) {
-        case TownHall:
-        case School:
-            return {3, 3};
-        case Farm:
-            return {4, 4};
         case GoldMine:
-        case Quarry:
-        case SawMill:
-            return {2, 2};
-        case LumberjackHouse:
-        case Tower:
-            return {1, 1};
-        default:
-            return {0, 0};
-    }
-}
-
-inline std::optional<float> getBuildingsRange(const BuildingType type) {
-    switch (type) {
-        case Tower:
-            return 6;
+            return GoldRock;
         default:
             return std::nullopt;
     }
