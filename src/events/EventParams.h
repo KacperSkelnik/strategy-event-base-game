@@ -1,5 +1,7 @@
 #pragma once
-#include "../board/BuildingType.h"
+#include "../board/buildings/BuildingType.h"
+#include "../board/characters/CharacterType.h"
+#include "../board/GridPosition.h"
 #include "../economy/EconomyResource.h"
 #include "SFML/System/Vector2.hpp"
 #include <variant>
@@ -14,4 +16,9 @@ struct SpendResourceParams {
     int             amount;
 };
 
-using EventParams = std::variant<std::monostate, CreateBuildingParams, SpendResourceParams>;
+struct CreateCharacterParams {
+    CharacterType characterType;
+    GridPosition  sourcePosition;
+};
+
+using EventParams = std::variant<std::monostate, CreateBuildingParams, SpendResourceParams, CreateCharacterParams>;

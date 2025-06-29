@@ -1,17 +1,24 @@
 #pragma once
-#include "Building.h"
+
+#include "buildings/Building.h"
+#include "characters/Character.h"
+#include "characters/CharacterType.h"
 #include "Grid.h"
 #include <vector>
 
 class Board final: public EventEntity {
   private:
-    std::vector<std::shared_ptr<Building>> buildings;
-    std::shared_ptr<Grid>                  grid;
+    std::vector<std::shared_ptr<Building>>  buildings;
+    std::vector<std::shared_ptr<Character>> characters;
+    std::shared_ptr<Grid>                   grid;
 
   public:
     explicit Board(std::shared_ptr<Grid> grid);
     ~Board() override = default;
 
+    // buildings
     bool                                     createBuilding(BuildingType buildingType, const sf::Vector2i& position);
     std::optional<std::shared_ptr<Building>> trySelectBuilding(const sf::Vector2i& mousePosition) const;
+    // characters
+    bool createCharacter(CharacterType characterType, const GridPosition& sourcePosition);
 };

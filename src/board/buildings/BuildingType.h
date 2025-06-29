@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../globals/Resource.h"
-#include "EnvironmentType.h"
+#include "../../globals/Resource.h"
+#include "../EnvironmentType.h"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <optional>
@@ -17,7 +17,7 @@ typedef enum BuildingType {
     Tower           = 8,
 } BuildingType;
 
-inline sf::Texture& getBuildingsTexture(const BuildingType type) {
+inline sf::Texture& getBuildingTexture(const BuildingType type) {
     using namespace Resource;
 
     switch (type) {

@@ -4,7 +4,7 @@
 
 #include "Game.h"
 
-#include "board/events/CreateBuildingHandler.h"
+#include "board/buildings/events/CreateBuildingHandler.h"
 #include "board/Grid.h"
 #include "economy/events/SpendResourceHandler.h"
 #include "globals/Random.h"
@@ -65,11 +65,21 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                auto params = CreateBuildingParams {selectedBuilding.value(), event->position};
+                const auto params = CreateBuildingParams {selectedBuilding.value(), event->position};
                 eventQueue->push(std::make_shared<Event>(board, CreateBuilding, params));
             }
 
-            else if (board->trySelectBuilding(event->position)) {
+            else if (const auto building = board->trySelectBuilding(event->position); building.has_value()) {
+                switch (building.value()->getType()) {
+                    case TownHall: {
+                        const auto params = CreateCharacterParams {Serf, building.value()->getPosition()};
+                        eventQueue->push(std::make_shared<Event>(board, CreateCharacter, params));
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
             }
         }
 

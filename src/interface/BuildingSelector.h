@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../board/Building.h"
+#include "../board/buildings/Building.h"
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include <span>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../events/EventHandler.h"
-#include "../../events/EventParams.h"
-#include "../Board.h"
+#include "../../../events/EventHandler.h"
+#include "../../../events/EventParams.h"
+#include "../../Board.h"
 #include <memory>
 
 class CreateBuildingHandler final: public EventHandler<Board, bool> {

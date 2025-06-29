@@ -12,13 +12,16 @@
 Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
     using namespace Random;
 
-    // Buildings occupation
+    // Building's occupation
     buildingsGrid = std::vector(cols * rows, 0);
+
+    // Character's occupation
+    charactersGrid = std::vector(cols * rows, 0);
 
     //  Environment occupation
     environmentGrid.reserve(cols * rows);
     for (unsigned i = 0; i < cols * rows; ++i) {
-        float randomValue = RandomGenerator::getFloat(0, 1);
+        const float randomValue = RandomGenerator::getFloat(0, 1);
         if (randomValue < 0.05f) {
             environmentGrid[i] = GoldRock;
         } else {
@@ -65,19 +68,42 @@ BuildingType Grid::getBuildingFrom(const unsigned col, const unsigned row) const
     return static_cast<BuildingType>(buildingsGrid[col + row * cols]);
 }
 
+CharacterType Grid::getCharacterFrom(const unsigned col, const unsigned row) const {
+    return static_cast<CharacterType>(charactersGrid[col + row * cols]);
+}
+
 EnvironmentType Grid::getEnvironmentFrom(const unsigned col, const unsigned row) const {
     return static_cast<EnvironmentType>(environmentGrid[col + row * cols]);
 }
 
-sf::Vector2f Grid::getBuildingPosition(const BuildingType building, const sf::Vector2f position) {
+sf::Vector2f Grid::getCenterPosition(const sf::Texture& texture, const sf::Vector2f position) {
     using namespace Settings;
 
-    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) -
-                            static_cast<float>(getBuildingsTexture(building).getSize().x) / 2.0f;
-    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) -
-                            static_cast<float>(getBuildingsTexture(building).getSize().y);
+    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) - static_cast<float>(texture.getSize().x) / 2.0f;
+    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) - static_cast<float>(texture.getSize().y);
 
     return {centeredX, centeredY};
+}
+
+// Implements Moore Neighbors
+std::vector<GridPosition> Grid::getNeighbors(const GridPosition& position) const {
+    std::vector<GridPosition> neighbors;
+    neighbors.reserve(8); // max number of neighbors
+
+    for (int dy = 1; dy >= -1; dy--) {
+        for (int dx = 1; dx >= -1; dx--) {
+            if (dx == 0 && dy == 0) continue; // skip center cell
+
+            const int nx = position.column + dx;
+            const int ny = position.row + dy;
+
+            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                neighbors.emplace_back(ny, nx);
+            }
+        }
+    }
+
+    return neighbors;
 }
 
 void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const {
@@ -99,19 +125,20 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
 
     for (int i = 0; i < cols; i++) {
         for (int j = 0; j < rows; j++) {
-            const bool   isOccupied = isCellOccupied(i, j);
-            sf::Vector2f position   = getScreenPosition(i, j);
+            const OccupationType occupation = checkOccupation(i, j);
+            sf::Vector2f         position   = getScreenPosition(i, j);
 
             const EnvironmentType     environment = getEnvironmentFrom(i, j);
             sf::Sprite                sprite(getEnvironmentTexture(environment));
             std::optional<sf::Sprite> buildingToBuildSprite = std::nullopt;
             if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() == j) {
                 position.y += -Variables::getSpriteHeight() * 0.1f;
-                if (isOccupied) {
+                if (occupation == BuildingOccupation) {
                     sprite.setTexture(Textures::getGround());
                 } else {
-                    buildingToBuildSprite.emplace(sf::Sprite(getBuildingsTexture(maybeSelectedBuilding.value())));
-                    buildingToBuildSprite->setPosition(getBuildingPosition(maybeSelectedBuilding.value(), position));
+                    const sf::Texture& texture = getBuildingTexture(maybeSelectedBuilding.value());
+                    buildingToBuildSprite.emplace(sf::Sprite(texture));
+                    buildingToBuildSprite->setPosition(getCenterPosition(texture, position));
                 }
             }
             sprite.setPosition(position);
@@ -120,28 +147,39 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
                 Window::get().draw(buildingToBuildSprite.value());
             }
 
-            if (isOccupied) {
+            if (occupation == BuildingOccupation) {
                 const BuildingType building = getBuildingFrom(i, j);
-                sf::Sprite         buildingSprite(getBuildingsTexture(building));
-                buildingSprite.setPosition(getBuildingPosition(building, position));
+                const sf::Texture& texture  = getBuildingTexture(building);
+                sf::Sprite         buildingSprite(texture);
+                buildingSprite.setPosition(getCenterPosition(texture, position));
                 Window::get().draw(buildingSprite);
+            }
+            if (occupation == CharacterOccupation) {
+                const CharacterType character = getCharacterFrom(i, j);
+                const sf::Texture&  texture   = getCharacterTexture(character);
+                sf::Sprite          characterSprite(getCharacterTexture(character));
+                characterSprite.setPosition(getCenterPosition(texture, position));
+                Window::get().draw(characterSprite);
             }
         }
     }
 }
 
-bool Grid::isCellOccupied(const unsigned col, const unsigned row) const {
+OccupationType Grid::checkOccupation(const unsigned col, const unsigned row) const {
     // Bounds check
     if (col >= cols || row >= rows) {
-        return true;
+        return Bound;
     }
 
     // Cells occupation
     if (buildingsGrid[col + row * cols]) {
-        return true;
+        return BuildingOccupation;
+    }
+    if (charactersGrid[col + row * cols]) {
+        return CharacterOccupation;
     }
 
-    return false;
+    return Free;
 }
 
 std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
@@ -152,11 +190,11 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
     const auto [col, row]            = getGridPosition(worldPosition.x, worldPosition.y);
 
-    const bool                           isOccupied          = isCellOccupied(col, row);
+    const OccupationType                 occupation          = checkOccupation(col, row);
     const std::optional<EnvironmentType> requiredEnvironment = getRequiredEnvironment(buildingType);
     const EnvironmentType                cellsEnvironment    = getEnvironmentFrom(col, row);
 
-    if (!isOccupied && (!requiredEnvironment.has_value() || cellsEnvironment == requiredEnvironment.value())) {
+    if (occupation == Free && (!requiredEnvironment.has_value() || cellsEnvironment == requiredEnvironment.value())) {
         buildingsGrid[col + row * cols] = buildingType;
         GridPosition gridPos            = {row, col};
         return gridPos;
@@ -165,13 +203,26 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
 }
 
 std::optional<sf::Sprite> Grid::getBuildingSprite(const GridPosition& position) const {
-    if (isCellOccupied(position.column, position.row)) {
+    const OccupationType occupation = checkOccupation(position.column, position.row);
+    if (occupation == BuildingOccupation) {
         const BuildingType building = getBuildingFrom(position.column, position.row);
-        sf::Sprite         buildingSprite(getBuildingsTexture(building));
+        const sf::Texture& texture  = getBuildingTexture(building);
+        sf::Sprite         buildingSprite(texture);
         const sf::Vector2f screenPosition = getScreenPosition(position.column, position.row);
-        buildingSprite.setPosition(getBuildingPosition(building, screenPosition));
+        buildingSprite.setPosition(getCenterPosition(texture, screenPosition));
 
         return buildingSprite;
+    }
+    return std::nullopt;
+}
+
+std::optional<GridPosition> Grid::addCharacter(const CharacterType characterType, const GridPosition& sourcePosition) {
+    for (const GridPosition neighbor : getNeighbors(sourcePosition)) {
+        const OccupationType occupation = checkOccupation(neighbor.column, neighbor.row);
+        if (occupation == Free) {
+            charactersGrid[neighbor.column + neighbor.row * cols] = characterType;
+            return neighbor;
+        }
     }
     return std::nullopt;
 }

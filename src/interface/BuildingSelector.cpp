@@ -25,7 +25,7 @@ BuildingSelector::BuildingSelector(const std::initializer_list<BuildingType> inp
     for (const BuildingType building : inputElements) {
         sf::RectangleShape rect;
         rect.setSize({elementSize, elementSize});
-        rect.setTexture(&getBuildingsTexture(building));
+        rect.setTexture(&getBuildingTexture(building));
         rect.setPosition({basePositionX + shift, basePositionY + space});
 
         elements.emplace_back(rect);

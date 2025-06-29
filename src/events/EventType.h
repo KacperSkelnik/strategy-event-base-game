@@ -6,5 +6,5 @@ typedef enum EventType {
     // Economy
     SpendResource,
     // Characters
-    CreateSerf,
+    CreateCharacter,
 } EventType;

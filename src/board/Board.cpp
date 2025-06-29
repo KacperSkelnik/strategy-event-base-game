@@ -34,3 +34,12 @@ std::optional<std::shared_ptr<Building>> Board::trySelectBuilding(const sf::Vect
     }
     return std::nullopt;
 }
+
+bool Board::createCharacter(CharacterType characterType, const GridPosition& sourcePosition) {
+    std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, sourcePosition);
+    if (maybePosition.has_value()) {
+        characters.emplace_back(std::make_shared<Character>(characterType, maybePosition.value()));
+        return true;
+    }
+    return false;
+}

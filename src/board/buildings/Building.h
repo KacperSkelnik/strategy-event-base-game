@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../events/EventEntity.h"
+#include "../../events/EventEntity.h"
+#include "../GridPosition.h"
 #include "BuildingType.h"
-#include "GridPosition.h"
 
 class Building final: public EventEntity {
   private:
