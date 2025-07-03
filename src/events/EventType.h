@@ -1,10 +1,11 @@
 #pragma once
 
-typedef enum EventType {
+enum EventType {
     // Buildings
     CreateBuilding,
-    // Economy
-    SpendResource,
     // Characters
     CreateCharacter,
-} EventType;
+    // Economy
+    SpendResource,
+    ProduceResource
+};

@@ -4,24 +4,34 @@
 
 #include "EconomyState.h"
 
-EconomyState::EconomyState(const int initialGold): goldAmount(initialGold) {}
-
-void EconomyState::addGold(const int amount) {
-    goldAmount += amount;
+EconomyState::EconomyState(const int initialGold) {
+    resources[Gold] = initialGold;
 }
 
-bool EconomyState::spendGold(const int amount) {
-    if (goldAmount >= amount) {
-        goldAmount -= amount;
+void EconomyState::add(const EconomyResource type, const int amount) {
+    resources[type] += amount;
+}
+
+bool EconomyState::trySpend(const EconomyResource type, const int amount) {
+    if (canAfford(type, amount)) {
+        resources[type] -= amount;
         return true;
     }
     return false;
 }
 
-int EconomyState::getGold() const {
-    return goldAmount;
+int EconomyState::getResourceAmount(const EconomyResource type) const {
+    const auto it = resources.find(type);
+    if (it != resources.end()) {
+        return it->second;
+    }
+    return 0;
 }
 
-bool EconomyState::canAfford(const int amount) const {
-    return goldAmount >= amount;
+bool EconomyState::canAfford(const EconomyResource type, const int amount) const {
+    auto it = resources.find(type);
+    if (it != resources.end()) {
+        return it->second >= amount;
+    }
+    return false;
 }

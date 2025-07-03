@@ -26,7 +26,7 @@ std::optional<std::shared_ptr<Building>> Board::trySelectBuilding(const sf::Vect
 
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
 
-    for (const auto building : buildings) {
+    for (const auto& building : buildings) {
         std::optional<sf::Sprite> maybeSprite = grid->getBuildingSprite(building->getPosition());
         if (maybeSprite.has_value() && maybeSprite.value().getGlobalBounds().contains(worldPosition)) {
             return building;

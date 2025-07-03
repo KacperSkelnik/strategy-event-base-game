@@ -65,6 +65,8 @@ add_executable(main src/main.cpp
         src/board/characters/events/SerfStateHandler.h
         src/events/EventParams.h
         src/board/OccupationType.h
+        src/board/buildings/ResourceFactory.cpp
+        src/board/buildings/ResourceFactory.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

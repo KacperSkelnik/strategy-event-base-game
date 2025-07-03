@@ -1,10 +1,11 @@
 #pragma once
 
+#include "../../economy/EconomyResource.h"
 #include "../../events/EventEntity.h"
 #include "../GridPosition.h"
 #include "BuildingType.h"
 
-class Building final: public EventEntity {
+class Building: public EventEntity {
   private:
     BuildingType type;
     GridPosition position;
@@ -14,6 +15,6 @@ class Building final: public EventEntity {
     explicit Building(BuildingType type, GridPosition position);
     ~Building() override = default;
 
-    BuildingType getType() const { return type; }
-    GridPosition getPosition() const { return position; }
+    [[nodiscard]] BuildingType getType() const { return type; }
+    [[nodiscard]] GridPosition getPosition() const { return position; }
 };

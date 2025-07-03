@@ -1,6 +1,8 @@
 #pragma once
-#include "../../events/EventQueue.h"
+#include "../../../events/EventQueue.h"
+#include "../../../events/EventHandler.h"
 #include "../Character.h"
+
 
 class SerfStateHandler final: public EventHandler<Character> {
   private:

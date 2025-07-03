@@ -14,6 +14,6 @@ class Character final: public EventEntity {
     explicit Character(CharacterType type, GridPosition position);
     ~Character() override = default;
 
-    CharacterType getType() const { return type; }
-    GridPosition  getPosition() const { return position; }
+    [[nodiscard]] CharacterType getType() const { return type; }
+    [[nodiscard]] GridPosition  getPosition() const { return position; }
 };

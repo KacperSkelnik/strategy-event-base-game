@@ -18,7 +18,7 @@ void EventLoop::run() const {
         switch (event.value()->getEventType()) {
             case CreateBuilding: {
                 constexpr int price = 50;
-                if (economyState->canAfford(price)) {
+                if (economyState->canAfford(Gold, price)) {
                     const auto params  = event.value()->getEventParams<CreateBuildingParams>();
                     const bool success = CreateBuildingHandler(params).invokeOn(event.value()->getTarget());
 
@@ -31,13 +31,15 @@ void EventLoop::run() const {
             }
 
             case CreateCharacter: {
-                constexpr int price   = 10;
-                const auto    params  = event.value()->getEventParams<CreateCharacterParams>();
-                const bool    success = CreateCharacterHandler(params).invokeOn(event.value()->getTarget());
+                constexpr int price = 10;
+                if (economyState->canAfford(Gold, price)) {
+                    const auto params  = event.value()->getEventParams<CreateCharacterParams>();
+                    const bool success = CreateCharacterHandler(params).invokeOn(event.value()->getTarget());
 
-                if (success) {
-                    constexpr auto spendParams = SpendResourceParams {Gold, price};
-                    eventQueue->push(std::make_shared<Event>(economyState, SpendResource, spendParams));
+                    if (success) {
+                        constexpr auto spendParams = SpendResourceParams {Gold, price};
+                        eventQueue->push(std::make_shared<Event>(economyState, SpendResource, spendParams));
+                    }
                 }
                 break;
             }
