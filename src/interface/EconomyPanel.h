@@ -3,11 +3,12 @@
 #include "EconomyCell.h"
 
 class EconomyPanel {
-  private:
+
+private:
     std::vector<EconomyCell>      elements;
     std::shared_ptr<EconomyState> economyState;
 
-  public:
+public:
     EconomyPanel() = delete;
     explicit EconomyPanel(const std::shared_ptr<EconomyState>& economyState);
     ~EconomyPanel() = default;

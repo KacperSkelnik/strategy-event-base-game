@@ -3,7 +3,7 @@
 int main() {
     Game game = Game::create({
         TownHall,
-        // School,
+        School,
         // Farm,
         GoldMine,
         // Quarry,

@@ -5,14 +5,16 @@
 typedef std::map<std::shared_ptr<EventEntity>, std::shared_ptr<Event>> Storage;
 
 class EventQueue final {
-  private:
+
+private:
     Storage    events;
     std::mutex mutex;
 
-  public:
+public:
     EventQueue();
     ~EventQueue() = default;
 
     void                                                push(const std::shared_ptr<Event>& event);
     [[nodiscard]] std::optional<std::shared_ptr<Event>> pop();
+    void                                                clear();
 };

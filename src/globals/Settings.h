@@ -33,21 +33,35 @@ namespace Settings {
         int      minZoomsCnt;
     };
 
-    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ViewConfig, viewDraggingPart, viewDraggingOffset, viewDraggingTime, zoomFactor, maxZoomsCnt, minZoomsCnt);
+    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ViewConfig,
+                                       viewDraggingPart,
+                                       viewDraggingOffset,
+                                       viewDraggingTime,
+                                       zoomFactor,
+                                       maxZoomsCnt,
+                                       minZoomsCnt);
+
+    struct GameConfig {
+        sf::Time clockTickDuration;
+    };
+
+    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameConfig, clockTickDuration);
 
     struct Config {
         GraphicsConfig graphics;
         WindowConfig   window;
         ViewConfig     view;
+        GameConfig     game;
     };
 
-    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Config, graphics, window, view);
+    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Config, graphics, window, view, game);
 
     class Variables {
-      private:
+
+    private:
         Config config;
 
-      public:
+    public:
         Variables()  = default;
         ~Variables() = default;
         static void init();
@@ -65,5 +79,7 @@ namespace Settings {
         static float    getZoomFactor();
         static int      getMaxZoomsCnt();
         static int      getMinZoomsCnt();
+
+        static sf::Time getClockTickDuration();
     };
 } // namespace Settings

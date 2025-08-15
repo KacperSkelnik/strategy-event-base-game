@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../economy/EconomyResource.h"
 #include "../../globals/Resource.h"
 #include "../EnvironmentType.h"
 #include "SFML/Graphics/Texture.hpp"
@@ -57,5 +58,16 @@ inline std::optional<EconomyResource> getProducedResource(const BuildingType typ
             return Gold;
         default:
             return std::nullopt;
+    }
+}
+
+inline bool isFactory(const BuildingType type) {
+    switch (type) {
+        case TownHall:
+        case School:
+        case Tower:
+            return false;
+        default:
+            return true;
     }
 }

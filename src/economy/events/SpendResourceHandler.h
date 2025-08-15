@@ -5,13 +5,14 @@
 #include "../EconomyState.h"
 
 class SpendResourceHandler final: public EventHandler<EconomyState, bool> {
-  private:
+
+private:
     SpendResourceParams params;
 
-  protected:
+protected:
     bool invoke(std::shared_ptr<EconomyState> target) override;
 
-  public:
+public:
     explicit SpendResourceHandler(SpendResourceParams params);
     ~SpendResourceHandler() override = default;
 };

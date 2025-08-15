@@ -6,7 +6,8 @@
 #include <functional>
 
 class EconomyCell {
-  private:
+
+private:
     std::function<int()> economyResourceGetter;
     std::array<int, 250> values;
     sf::RectangleShape   background;
@@ -21,9 +22,10 @@ class EconomyCell {
     void  updatePlot();
     void  updateText();
 
-  public:
+public:
     EconomyCell() = delete;
-    explicit EconomyCell(std::string economyName, std::function<int()> economyResourceGetter, sf::Vector2f position, sf::Vector2f size);
+    explicit EconomyCell(std::string  economyName, std::function<int()> economyResourceGetter, sf::Vector2f position,
+                         sf::Vector2f size);
     ~EconomyCell() = default;
 
     void update();

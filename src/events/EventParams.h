@@ -1,5 +1,7 @@
 #pragma once
+
 #include "../board/buildings/BuildingType.h"
+#include "../board/buildings/Building.h"
 #include "../board/characters/CharacterType.h"
 #include "../board/GridPosition.h"
 #include "../economy/EconomyResource.h"
@@ -17,8 +19,20 @@ struct SpendResourceParams {
 };
 
 struct CreateCharacterParams {
-    CharacterType characterType;
-    GridPosition  sourcePosition;
+    CharacterType             characterType;
+    std::shared_ptr<Building> school;
 };
 
-using EventParams = std::variant<std::monostate, CreateBuildingParams, SpendResourceParams, CreateCharacterParams>;
+struct GoForResourceParams {
+    GridPosition resourcePosition;
+};
+
+// clang-format off
+using EventParams = std::variant<
+    std::monostate,
+    CreateBuildingParams,
+    SpendResourceParams,
+    CreateCharacterParams,
+    GoForResourceParams
+>;
+// clang-format on

@@ -6,13 +6,14 @@
 #include <memory>
 
 class CreateBuildingHandler final: public EventHandler<Board, bool> {
-  private:
+
+private:
     CreateBuildingParams params;
 
-  protected:
+protected:
     bool invoke(std::shared_ptr<Board> target) override;
 
-  public:
+public:
     explicit CreateBuildingHandler(const CreateBuildingParams& params);
     ~CreateBuildingHandler() override = default;
 };

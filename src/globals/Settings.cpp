@@ -97,4 +97,10 @@ namespace Settings {
 
         return s_variables_instance->config.view.minZoomsCnt;
     }
+
+    sf::Time Variables::getClockTickDuration() {
+        assert(s_variables_instance);
+
+        return s_variables_instance->config.game.clockTickDuration;
+    }
 } // namespace Settings

@@ -9,7 +9,8 @@
 #include "interface/EconomyPanel.h"
 
 class Game {
-  private:
+
+private:
     // Board
     std::shared_ptr<Grid>  grid;
     std::shared_ptr<Board> board;
@@ -24,8 +25,9 @@ class Game {
     bool             screenCanBeDragged;
 
     // Events
-    std::shared_ptr<EventQueue> eventQueue;
-    EventLoop                   eventLoop;
+    std::shared_ptr<EventQueue>          eventQueue;
+    std::shared_ptr<ScheduledEventQueue> scheduledEventQueue;
+    EventLoop                            eventLoop;
 
     static void onClose();
     void        onMousePress(const sf::Event::MouseButtonPressed* event);
@@ -38,7 +40,7 @@ class Game {
 
     Game(std::initializer_list<BuildingType> buildingTypes);
 
-  public:
+public:
     Game() = delete;
     ~Game();
     static Game create(std::initializer_list<BuildingType> buildingTypes);

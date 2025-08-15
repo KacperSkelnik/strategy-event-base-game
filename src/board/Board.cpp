@@ -5,6 +5,8 @@
 #include "Board.h"
 
 #include "../globals/Screen.h"
+#include "buildings/ResourceFactory.h"
+#include <iostream>
 
 Board::Board(std::shared_ptr<Grid> grid): grid(std::move(grid)) {
     buildings.reserve(32);
@@ -13,7 +15,11 @@ Board::Board(std::shared_ptr<Grid> grid): grid(std::move(grid)) {
 bool Board::createBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
     const std::optional<GridPosition> maybePosition = grid->addBuilding(buildingType, position);
     if (maybePosition.has_value()) {
-        buildings.emplace_back(std::make_shared<Building>(buildingType, maybePosition.value()));
+        if (isFactory(buildingType)) {
+            buildings.emplace_back(std::make_shared<ResourceFactory>(buildingType, maybePosition.value()));
+        } else {
+            buildings.emplace_back(std::make_shared<Building>(buildingType, maybePosition.value()));
+        }
         return true;
     }
     return false;
@@ -35,11 +41,20 @@ std::optional<std::shared_ptr<Building>> Board::trySelectBuilding(const sf::Vect
     return std::nullopt;
 }
 
-bool Board::createCharacter(CharacterType characterType, const GridPosition& sourcePosition) {
-    std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, sourcePosition);
+std::optional<std::shared_ptr<Character>> Board::produceCharacter(CharacterType                   characterType,
+                                                                  const std::shared_ptr<Building> school) {
+    const std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, school->getPosition());
     if (maybePosition.has_value()) {
-        characters.emplace_back(std::make_shared<Character>(characterType, maybePosition.value()));
-        return true;
+        auto character = std::make_shared<Character>(characterType, maybePosition.value());
+        characters.push_back(character);
+        return character;
     }
-    return false;
+    return std::nullopt;
+}
+
+void Board::moveCharacter(const std::shared_ptr<Character>& character, const GridPosition& destinationPosition) const {
+    const std::optional<GridPosition> newPosition = grid->moveCharacter(character->getPosition(), destinationPosition);
+    if (newPosition.has_value()) {
+        character->setPosition(newPosition.value());
+    }
 }

@@ -5,10 +5,11 @@
 #include <unordered_map>
 
 class EconomyState final: public EventEntity {
-  private:
+
+private:
     std::unordered_map<EconomyResource, int> resources;
 
-  public:
+public:
     explicit EconomyState(int initialGold);
     ~EconomyState() override = default;
 

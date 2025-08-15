@@ -5,10 +5,11 @@
 namespace Resource {
 
     class Fonts {
-      private:
+
+    private:
         sf::Font regular;
 
-      public:
+    public:
         Fonts()  = default;
         ~Fonts() = default;
         static void      init();
@@ -17,7 +18,7 @@ namespace Resource {
     };
 
     class Textures {
-      private:
+    private:
         // environment
         sf::Texture grass;
         sf::Texture ground;
@@ -36,7 +37,7 @@ namespace Resource {
         // characters
         sf::Texture serf;
 
-      public:
+    public:
         Textures()  = default;
         ~Textures() = default;
         static void init();

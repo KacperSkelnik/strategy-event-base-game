@@ -1,17 +1,21 @@
 #pragma once
 
+#include <utility>
+
 #include "../../../board/Board.h"
 #include "../../../events/EventHandler.h"
 #include "../../../events/EventParams.h"
 
-class CreateCharacterHandler final: public EventHandler<Board, bool> {
-  private:
+
+class CreateCharacterHandler final: public EventHandler<Board, std::optional<std::shared_ptr<Character>>> {
+
+private:
     CreateCharacterParams params;
 
-  protected:
-    bool invoke(std::shared_ptr<Board> target) override;
+protected:
+    std::optional<std::shared_ptr<Character>> invoke(std::shared_ptr<Board> target) override;
 
-  public:
-    explicit CreateCharacterHandler(const CreateCharacterParams& params);
+public:
+    explicit CreateCharacterHandler(CreateCharacterParams params);
     ~CreateCharacterHandler() override = default;
 };

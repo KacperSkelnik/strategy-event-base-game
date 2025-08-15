@@ -11,6 +11,7 @@
 #include "globals/Resource.h"
 #include "globals/Screen.h"
 #include "globals/Settings.h"
+#include "globals/Time.h"
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -23,19 +24,23 @@ Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     economyPanel(EconomyPanel(economyState)),
     screenCanBeDragged(false),
     eventQueue(std::make_shared<EventQueue>()),
-    eventLoop(EventLoop(eventQueue, economyState)) {}
+    scheduledEventQueue(std::make_shared<ScheduledEventQueue>()),
+    eventLoop(EventLoop(eventQueue, scheduledEventQueue, economyState, board)) {
+}
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     using namespace Settings;
     using namespace Screen;
     using namespace Resource;
     using namespace Random;
+    using namespace Time;
 
     Variables::init();
     Window::init(Variables::getWindowWidth(), Variables::getWindowHeight());
     Fonts::init();
     Textures::init();
     RandomGenerator::init();
+    Clock::init();
 
     return {buildingTypes};
 }
@@ -45,12 +50,16 @@ Game::~Game() {
     using namespace Screen;
     using namespace Resource;
     using namespace Random;
+    using namespace Time;
+
+    eventLoop.stop();
 
     Variables::shutDown();
     Window::shutDown();
     Fonts::shutDown();
     Textures::shutDown();
     RandomGenerator::shutDown();
+    Clock::shutDown();
 }
 
 void Game::onClose() {
@@ -65,14 +74,12 @@ void Game::onMousePress(const sf::Event::MouseButtonPressed* event) {
     if (event->button == sf::Mouse::Button::Left) {
         if (Window::isMouseOnMainView(event->position)) {
             if (selectedBuilding) {
-                const auto params = CreateBuildingParams {selectedBuilding.value(), event->position};
+                const auto params = CreateBuildingParams{selectedBuilding.value(), event->position};
                 eventQueue->push(std::make_shared<Event>(board, CreateBuilding, params));
-            }
-
-            else if (const auto building = board->trySelectBuilding(event->position); building.has_value()) {
+            } else if (const auto building = board->trySelectBuilding(event->position); building.has_value()) {
                 switch (building.value()->getType()) {
-                    case TownHall: {
-                        const auto params = CreateCharacterParams {Serf, building.value()->getPosition()};
+                    case School: {
+                        const auto params = CreateCharacterParams{Serf, building.value()};
                         eventQueue->push(std::make_shared<Event>(board, CreateCharacter, params));
                         break;
                     }
@@ -163,7 +170,7 @@ void Game::runEventLoop() const {
     using namespace Screen;
 
     while (Window::get().isOpen()) {
-        eventLoop.run();
+        eventLoop.runSingle();
     }
 }
 
