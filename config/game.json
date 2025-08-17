@@ -4,8 +4,8 @@
     "spriteHeight": 97.0
   },
   "window": {
-    "windowWidth": 1200,
-    "windowHeight": 800
+    "windowWidth": 1400,
+    "windowHeight": 1000
   },
   "view": {
     "viewDraggingPart": 0.05,
@@ -16,6 +16,6 @@
     "minZoomsCnt": -20
   },
   "game": {
-    "clockTickDuration": 1
+    "clockTickDuration": 0.5
   }
 }

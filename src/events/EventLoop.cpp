@@ -8,8 +8,8 @@
 #include "../board/buildings/events/CreateBuildingHandler.h"
 #include "../board/characters/events/CreateCharacterHandler.h"
 #include "../board/characters/events/GoForResourceHandler.h"
+#include "../board/characters/events/StoreResourceHandler.h"
 #include "../board/characters/events/IdleHandler.h"
-#include "../board/characters/SerfCharacter.h"
 #include "../economy/events/SpendResourceHandler.h"
 #include "../globals/Time.h"
 #include "../globals/Settings.h"
@@ -102,6 +102,14 @@ void EventLoop::applyEvent(const std::shared_ptr<Event>& event) const {
         }
 
         case StoreResource: {
+            using namespace Time;
+            using namespace Settings;
+
+            const auto     params    = event->getEventParams<StoreResourceParams>();
+            auto           handler   = StoreResourceHandler(board, economyState, params);
+            Event          nextEvent = handler.invokeOn(event->getTarget());
+            const sf::Time runAt     = Clock::now() + Variables::getClockTickDuration();
+            scheduledEventQueue->push(std::make_shared<Event>(nextEvent), runAt);
             break;
         }
 

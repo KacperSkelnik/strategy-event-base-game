@@ -11,6 +11,7 @@ GoForResourceHandler::GoForResourceHandler(const std::shared_ptr<Board>& board, 
 
 Event GoForResourceHandler::invoke(const std::shared_ptr<SerfCharacter> target) {
     if (params.resourcePosition == target->getPosition()) {
+        target->setResource(Gold, 10);
         return {target, Idle};
     }
 

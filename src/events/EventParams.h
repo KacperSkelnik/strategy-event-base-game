@@ -27,12 +27,17 @@ struct GoForResourceParams {
     GridPosition resourcePosition;
 };
 
+struct StoreResourceParams {
+    GridPosition storagePosition;
+};
+
 // clang-format off
 using EventParams = std::variant<
     std::monostate,
     CreateBuildingParams,
     SpendResourceParams,
     CreateCharacterParams,
-    GoForResourceParams
+    GoForResourceParams,
+    StoreResourceParams
 >;
 // clang-format on

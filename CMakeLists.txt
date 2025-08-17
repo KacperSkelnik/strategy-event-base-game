@@ -76,6 +76,8 @@ add_executable(main src/main.cpp
         src/events/ScheduledEventQueue.cpp
         src/events/ScheduledEventQueue.h
         src/board/characters/events/CreateCharacterHandler.cpp
+        src/board/characters/events/StoreResourceHandler.cpp
+        src/board/characters/events/StoreResourceHandler.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)
