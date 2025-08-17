@@ -14,7 +14,6 @@ class ScheduledEventQueue final {
 
 private:
     ScheduledStorage events;
-    std::mutex       mutex;
 
 public:
     ScheduledEventQueue();

@@ -64,10 +64,11 @@ sf::Vector2u Grid::getGridPosition(const float posX, const float posY) const {
 sf::Vector2f Grid::getScreenPosition(const unsigned col, const unsigned row) const {
     using namespace Settings;
 
-    const float screenX = (static_cast<float>(col) * iX + static_cast<float>(row) * jX) * Variables::getSpriteWidth() *
-                          0.5f;
-    const float screenY = (static_cast<float>(col) * iY + static_cast<float>(row) * jY) * Variables::getSpriteHeight() *
-                          0.5f;
+    const float screenX =
+        (static_cast<float>(col) * iX + static_cast<float>(row) * jX) * Variables::getSpriteWidth() * 0.5f;
+    const float screenY =
+        (static_cast<float>(col) * iY + static_cast<float>(row) * jY) * Variables::getSpriteHeight() * 0.5f;
+
     return {screenX - Variables::getSpriteWidth() / 2, screenY};
 }
 
@@ -86,10 +87,10 @@ EnvironmentType Grid::getEnvironmentFrom(const unsigned col, const unsigned row)
 sf::Vector2f Grid::getCenterPosition(const sf::Texture& texture, const sf::Vector2f position) {
     using namespace Settings;
 
-    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) - static_cast<float>(texture.getSize().x)
-                            / 2.0f;
-    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) - static_cast<float>(texture.getSize().
-                                y);
+    const float centeredX =
+        position.x + (Variables::getSpriteWidth() / 2.0f) - static_cast<float>(texture.getSize().x) / 2.0f;
+    const float centeredY =
+        position.y + (Variables::getSpriteHeight() / 2.0f) - static_cast<float>(texture.getSize().y);
 
     return {centeredX, centeredY};
 }

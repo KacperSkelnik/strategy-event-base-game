@@ -11,13 +11,12 @@ ScheduledEventQueue::ScheduledEventQueue():
 }
 
 void ScheduledEventQueue::push(const std::shared_ptr<Event>& event, const sf::Time& runAt) {
-    std::lock_guard<std::mutex> lock(mutex);
     events[event->getTarget()] = ScheduledEvent{event, runAt};
 }
 
 std::optional<std::shared_ptr<Event>> ScheduledEventQueue::pop() {
     using namespace Time;
-    std::lock_guard<std::mutex> lock(mutex);
+
     if (events.empty()) {
         return std::nullopt;
     }

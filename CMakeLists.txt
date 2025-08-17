@@ -78,6 +78,8 @@ add_executable(main src/main.cpp
         src/board/characters/events/CreateCharacterHandler.cpp
         src/board/characters/events/StoreResourceHandler.cpp
         src/board/characters/events/StoreResourceHandler.h
+        src/UserInput.cpp
+        src/UserInput.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

@@ -7,8 +7,7 @@ typedef std::map<std::shared_ptr<EventEntity>, std::shared_ptr<Event>> Storage;
 class EventQueue final {
 
 private:
-    Storage    events;
-    std::mutex mutex;
+    Storage events;
 
 public:
     EventQueue();

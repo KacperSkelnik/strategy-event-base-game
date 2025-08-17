@@ -8,12 +8,10 @@ EventQueue::EventQueue(): events(std::map<std::shared_ptr<EventEntity>, std::sha
 }
 
 void EventQueue::push(const std::shared_ptr<Event>& event) {
-    std::lock_guard<std::mutex> lock(mutex);
     events[event->getTarget()] = event;
 }
 
 std::optional<std::shared_ptr<Event>> EventQueue::pop() {
-    std::lock_guard<std::mutex> lock(mutex);
     if (events.empty()) {
         return std::nullopt;
     }
