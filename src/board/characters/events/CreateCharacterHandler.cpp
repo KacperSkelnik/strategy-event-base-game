@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CreateCharacterHandler.h"
 
 CreateCharacterHandler::CreateCharacterHandler(CreateCharacterParams params): params(std::move(params)) {
