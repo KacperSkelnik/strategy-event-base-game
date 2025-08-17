@@ -4,7 +4,6 @@
 
 #include "Game.h"
 
-#include "board/buildings/events/CreateBuildingHandler.h"
 #include "board/Grid.h"
 #include "economy/events/SpendResourceHandler.h"
 #include "globals/Random.h"
@@ -14,7 +13,7 @@
 #include "globals/Time.h"
 #include <SFML/Graphics.hpp>
 
-Game::Game(const std::initializer_list<BuildingType> buildingTypes):
+Game::Game(const std::initializer_list<BuildingType> buildingTypes, const GridState& initialState):
     grid(std::make_shared<Grid>(32, 32)),
     board(std::make_shared<Board>(grid)),
     economyState(std::make_shared<EconomyState>(500)),
@@ -24,6 +23,8 @@ Game::Game(const std::initializer_list<BuildingType> buildingTypes):
     scheduledEventQueue(std::make_shared<ScheduledEventQueue>()),
     eventLoop(EventLoop(eventQueue, scheduledEventQueue, economyState, board)),
     userInput(UserInput(board, eventQueue, buildingSelector)) {
+
+    gridsBuffer = {std::make_unique<GridState>(initialState), std::make_unique<GridState>(initialState)};
 }
 
 Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
@@ -40,7 +41,9 @@ Game Game::create(const std::initializer_list<BuildingType> buildingTypes) {
     RandomGenerator::init();
     Clock::init();
 
-    return Game{buildingTypes};
+    const auto initialState = GridState(32, 32);
+
+    return Game{buildingTypes, initialState};
 }
 
 Game::~Game() {
@@ -74,14 +77,23 @@ void Game::draw() const {
     Window::get().display();
 }
 
+void Game::update() {
+    eventLoop.runSingle();
+    economyPanel.update();
+    userInput.handleEvent();
+}
+
 void Game::run() {
     using namespace Screen;
 
     while (Window::get().isOpen()) {
-        eventLoop.runSingle();
-        economyPanel.update();
-        userInput.handleEvent();
 
+        grid->setState(gridsBuffer[backIndex]);
+        update();
+
+        grid->setState(gridsBuffer[frontIndex]);
         draw();
+
+        *gridsBuffer[frontIndex] = *gridsBuffer[backIndex];
     }
 }

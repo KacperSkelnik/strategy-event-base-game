@@ -16,7 +16,7 @@ private:
     std::shared_ptr<Grid>  grid;
     std::shared_ptr<Board> board;
 
-    // State
+    // Economy
     std::shared_ptr<EconomyState> economyState;
 
     // Interface
@@ -31,11 +31,17 @@ private:
     // Input
     UserInput userInput;
 
+    // Game State
+    std::array<std::shared_ptr<GridState>, 2> gridsBuffer;
+    int                                       frontIndex = 0;
+    int                                       backIndex  = 1;
+
     void draw() const;
+    void update();
 
 public:
     Game() = delete;
-    explicit Game(std::initializer_list<BuildingType> buildingTypes);
+    explicit Game(std::initializer_list<BuildingType> buildingTypes, const GridState& initialState);
     ~Game();
 
     static Game create(std::initializer_list<BuildingType> buildingTypes);
