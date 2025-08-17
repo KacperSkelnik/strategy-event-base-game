@@ -4,7 +4,8 @@
 
 #include "EventQueue.h"
 
-EventQueue::EventQueue(): events(std::map<std::shared_ptr<EventEntity>, std::shared_ptr<Event>>()) {}
+EventQueue::EventQueue(): events(std::map<std::shared_ptr<EventEntity>, std::shared_ptr<Event>>()) {
+}
 
 void EventQueue::push(const std::shared_ptr<Event>& event) {
     std::lock_guard<std::mutex> lock(mutex);
@@ -19,4 +20,8 @@ std::optional<std::shared_ptr<Event>> EventQueue::pop() {
     auto [key, event] = *events.begin();
     events.erase(key);
     return event;
+}
+
+void EventQueue::clear() {
+    events.clear();
 }

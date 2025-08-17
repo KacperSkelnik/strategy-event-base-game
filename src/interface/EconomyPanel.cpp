@@ -22,7 +22,7 @@ EconomyPanel::EconomyPanel(const std::shared_ptr<EconomyState>& economyState): e
     elements.emplace_back(
         "Gold",
         [&]() {
-            return economyState->getGold();
+            return economyState->getResourceAmount(Gold);
         },
         sf::Vector2f {basePositionX + space, basePositionY + space},
         sf::Vector2f {elementWidth, elementHeight}

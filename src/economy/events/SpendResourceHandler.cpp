@@ -10,7 +10,7 @@ bool SpendResourceHandler::invoke(const std::shared_ptr<EconomyState> target) {
     bool succeeded = false;
     switch (params.resource) {
         case Gold:
-            succeeded = target->spendGold(params.amount);
+            succeeded = target->trySpend(Gold, params.amount);
     }
     return succeeded;
 }

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../../economy/EconomyResource.h"
 #include "../../globals/Resource.h"
 #include "../EnvironmentType.h"
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include <optional>
 
-typedef enum BuildingType {
+enum BuildingType {
     TownHall        = 1,
     School          = 2,
     Farm            = 3,
@@ -15,7 +16,7 @@ typedef enum BuildingType {
     LumberjackHouse = 6,
     SawMill         = 7,
     Tower           = 8,
-} BuildingType;
+};
 
 inline sf::Texture& getBuildingTexture(const BuildingType type) {
     using namespace Resource;
@@ -48,5 +49,25 @@ inline std::optional<EnvironmentType> getRequiredEnvironment(const BuildingType 
             return GoldRock;
         default:
             return std::nullopt;
+    }
+}
+
+inline std::optional<EconomyResource> getProducedResource(const BuildingType type) {
+    switch (type) {
+        case GoldMine:
+            return Gold;
+        default:
+            return std::nullopt;
+    }
+}
+
+inline bool isFactory(const BuildingType type) {
+    switch (type) {
+        case TownHall:
+        case School:
+        case Tower:
+            return false;
+        default:
+            return true;
     }
 }

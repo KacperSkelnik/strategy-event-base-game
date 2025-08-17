@@ -4,4 +4,7 @@
 
 #include "Character.h"
 
-Character::Character(const CharacterType type, const GridPosition position): type(type), position(position) {}
+Character::Character(const CharacterType type, const GridPosition position):
+    type(type),
+    position(position),
+    currentAction(Idle) {}

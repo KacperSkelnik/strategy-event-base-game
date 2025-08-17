@@ -5,10 +5,11 @@
 namespace Random {
 
     class RandomGenerator {
-      private:
+
+    private:
         std::mt19937 rng;
 
-      public:
+    public:
         RandomGenerator()  = default;
         ~RandomGenerator() = default;
         static void init();

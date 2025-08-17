@@ -1,11 +1,8 @@
-//
-// Created by Kacper Skelnik on 21.06.2025.
-//
-
 #include "CreateCharacterHandler.h"
 
-CreateCharacterHandler::CreateCharacterHandler(const CreateCharacterParams& params): params(params) {}
+CreateCharacterHandler::CreateCharacterHandler(CreateCharacterParams params): params(std::move(params)) {
+}
 
-bool CreateCharacterHandler::invoke(std::shared_ptr<Board> target) {
-    return target->createCharacter(params.characterType, params.sourcePosition);
+std::optional<std::shared_ptr<Character>> CreateCharacterHandler::invoke(const std::shared_ptr<Board> target) {
+    return target->produceCharacter(params.characterType, params.school);
 }

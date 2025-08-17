@@ -5,7 +5,8 @@
 namespace Screen {
 
     class Window {
-      private:
+
+    private:
         sf::RenderWindow            window;
         sf::View                    mainView;
         sf::View                    bottomView;
@@ -16,7 +17,7 @@ namespace Screen {
 
         static bool isMouseOn(const sf::Vector2i& mousePosition, const sf::View& view);
 
-      public:
+    public:
         Window()  = default;
         ~Window() = default;
         static void              init(unsigned initialWidth, unsigned initialHeight);

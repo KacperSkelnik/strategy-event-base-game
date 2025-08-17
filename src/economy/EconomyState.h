@@ -1,19 +1,20 @@
 #pragma once
 
 #include "../events/EventEntity.h"
+#include "EconomyResource.h"
+#include <unordered_map>
 
 class EconomyState final: public EventEntity {
-  private:
-    int goldAmount = 0;
 
-  public:
-    EconomyState() = delete;
+private:
+    std::unordered_map<EconomyResource, int> resources;
+
+public:
     explicit EconomyState(int initialGold);
     ~EconomyState() override = default;
 
-    void               addGold(int amount);
-    [[nodiscard]] bool spendGold(int amount); // iif goldAmount >= amount: true else false
-    [[nodiscard]] int  getGold() const;
-
-    [[nodiscard]] bool canAfford(int amount) const;
+    void               add(EconomyResource type, int amount);
+    [[nodiscard]] bool trySpend(EconomyResource type, int amount);
+    [[nodiscard]] int  getResourceAmount(EconomyResource type) const;
+    [[nodiscard]] bool canAfford(EconomyResource type, int amount) const;
 };

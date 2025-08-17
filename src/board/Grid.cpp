@@ -8,6 +8,7 @@
 #include "../globals/Resource.h"
 #include "../globals/Screen.h"
 #include "../globals/Settings.h"
+#include <iostream>
 
 Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
     using namespace Random;
@@ -28,6 +29,10 @@ Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
             environmentGrid[i] = Grass;
         }
     }
+}
+
+int Grid::getIndex(const unsigned col, const unsigned row) const {
+    return col + row * cols;
 }
 
 sf::priv::Vector4<float> Grid::invertMatrix(const sf::priv::Vector4<float> matrix) {
@@ -59,28 +64,32 @@ sf::Vector2u Grid::getGridPosition(const float posX, const float posY) const {
 sf::Vector2f Grid::getScreenPosition(const unsigned col, const unsigned row) const {
     using namespace Settings;
 
-    const float screenX = (static_cast<float>(col) * iX + static_cast<float>(row) * jX) * Variables::getSpriteWidth() * 0.5f;
-    const float screenY = (static_cast<float>(col) * iY + static_cast<float>(row) * jY) * Variables::getSpriteHeight() * 0.5f;
+    const float screenX = (static_cast<float>(col) * iX + static_cast<float>(row) * jX) * Variables::getSpriteWidth() *
+                          0.5f;
+    const float screenY = (static_cast<float>(col) * iY + static_cast<float>(row) * jY) * Variables::getSpriteHeight() *
+                          0.5f;
     return {screenX - Variables::getSpriteWidth() / 2, screenY};
 }
 
 BuildingType Grid::getBuildingFrom(const unsigned col, const unsigned row) const {
-    return static_cast<BuildingType>(buildingsGrid[col + row * cols]);
+    return static_cast<BuildingType>(buildingsGrid[getIndex(col, row)]);
 }
 
 CharacterType Grid::getCharacterFrom(const unsigned col, const unsigned row) const {
-    return static_cast<CharacterType>(charactersGrid[col + row * cols]);
+    return static_cast<CharacterType>(charactersGrid[getIndex(col, row)]);
 }
 
 EnvironmentType Grid::getEnvironmentFrom(const unsigned col, const unsigned row) const {
-    return static_cast<EnvironmentType>(environmentGrid[col + row * cols]);
+    return static_cast<EnvironmentType>(environmentGrid[getIndex(col, row)]);
 }
 
 sf::Vector2f Grid::getCenterPosition(const sf::Texture& texture, const sf::Vector2f position) {
     using namespace Settings;
 
-    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) - static_cast<float>(texture.getSize().x) / 2.0f;
-    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) - static_cast<float>(texture.getSize().y);
+    const float centeredX = position.x + (Variables::getSpriteWidth() / 2.0f) - static_cast<float>(texture.getSize().x)
+                            / 2.0f;
+    const float centeredY = position.y + (Variables::getSpriteHeight() / 2.0f) - static_cast<float>(texture.getSize().
+                                y);
 
     return {centeredX, centeredY};
 }
@@ -94,11 +103,11 @@ std::vector<GridPosition> Grid::getNeighbors(const GridPosition& position) const
         for (int dx = 1; dx >= -1; dx--) {
             if (dx == 0 && dy == 0) continue; // skip center cell
 
-            const int nx = position.column + dx;
-            const int ny = position.row + dy;
+            const int nCol = position.column + dx;
+            const int nRow = position.row + dy;
 
-            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
-                neighbors.emplace_back(ny, nx);
+            if (nCol >= 0 && nCol < cols && nRow >= 0 && nRow < rows) {
+                neighbors.emplace_back(nRow, nCol);
             }
         }
     }
@@ -131,7 +140,8 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             const EnvironmentType     environment = getEnvironmentFrom(i, j);
             sf::Sprite                sprite(getEnvironmentTexture(environment));
             std::optional<sf::Sprite> buildingToBuildSprite = std::nullopt;
-            if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() == j) {
+            if (maybeSelectedCol && maybeSelectedCol.value() == i && maybeSelectedRow && maybeSelectedRow.value() ==
+                j) {
                 position.y += -Variables::getSpriteHeight() * 0.1f;
                 if (occupation == BuildingOccupation) {
                     sprite.setTexture(Textures::getGround());
@@ -172,10 +182,10 @@ OccupationType Grid::checkOccupation(const unsigned col, const unsigned row) con
     }
 
     // Cells occupation
-    if (buildingsGrid[col + row * cols]) {
+    if (buildingsGrid[getIndex(col, row)]) {
         return BuildingOccupation;
     }
-    if (charactersGrid[col + row * cols]) {
+    if (charactersGrid[getIndex(col, row)]) {
         return CharacterOccupation;
     }
 
@@ -188,15 +198,15 @@ std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, c
 
     Window::mainViewFocus();
     const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
-    const auto [col, row]            = getGridPosition(worldPosition.x, worldPosition.y);
+    const auto         [col, row]    = getGridPosition(worldPosition.x, worldPosition.y);
 
     const OccupationType                 occupation          = checkOccupation(col, row);
     const std::optional<EnvironmentType> requiredEnvironment = getRequiredEnvironment(buildingType);
     const EnvironmentType                cellsEnvironment    = getEnvironmentFrom(col, row);
 
     if (occupation == Free && (!requiredEnvironment.has_value() || cellsEnvironment == requiredEnvironment.value())) {
-        buildingsGrid[col + row * cols] = buildingType;
-        GridPosition gridPos            = {row, col};
+        buildingsGrid[getIndex(col, row)] = buildingType;
+        GridPosition gridPos              = {row, col};
         return gridPos;
     }
     return std::nullopt;
@@ -216,13 +226,83 @@ std::optional<sf::Sprite> Grid::getBuildingSprite(const GridPosition& position) 
     return std::nullopt;
 }
 
-std::optional<GridPosition> Grid::addCharacter(const CharacterType characterType, const GridPosition& sourcePosition) {
-    for (const GridPosition neighbor : getNeighbors(sourcePosition)) {
+std::optional<GridPosition> Grid::addCharacter(const CharacterType characterType, const GridPosition& schoolPosition) {
+    for (const GridPosition neighbor : getNeighbors(schoolPosition)) {
         const OccupationType occupation = checkOccupation(neighbor.column, neighbor.row);
         if (occupation == Free) {
-            charactersGrid[neighbor.column + neighbor.row * cols] = characterType;
+            charactersGrid[getIndex(neighbor.column, neighbor.row)] = characterType;
             return neighbor;
         }
     }
     return std::nullopt;
+}
+
+// Implements Dijkstra's algorithm to find a path from start to goal
+std::vector<GridPosition> Grid::dijkstraPath(const GridPosition& start, const GridPosition& goal) const {
+    using PQItem = std::pair<int, GridPosition>; // priority queue item(distance, position)
+    struct CompareDistance {
+        bool operator()(const PQItem& a, const PQItem& b) const {
+            return a.first > b.first; // min-heap on distance
+        }
+    };
+
+    std::priority_queue<PQItem, std::vector<PQItem>, CompareDistance> queue;
+    std::unordered_map<GridPosition, GridPosition> cameFrom;
+    std::vector<int> distance(cols * rows, std::numeric_limits<int>::max());
+
+    const int startIdx = getIndex(start.column, start.row);
+    distance[startIdx] = 0;
+    queue.emplace(0, start);
+
+    while (!queue.empty()) {
+        auto [dist, current] = queue.top();
+        queue.pop();
+
+        if (current == goal) {
+            // Reconstruct a path
+            std::vector<GridPosition> path;
+            GridPosition              position = goal;
+            while (position != start) {
+                path.push_back(position);
+                position = cameFrom[position];
+            }
+            std::ranges::reverse(path);
+            return path;
+        }
+
+        // Skip if we already found a better path to this node
+        if (dist > distance[getIndex(current.column, current.row)]) {
+            continue;
+        }
+
+        for (GridPosition neighbor : getNeighbors(current)) {
+            const OccupationType occupation = checkOccupation(neighbor.column, neighbor.row);
+            if (occupation == Free || neighbor == goal) {
+                const int neighborIdx = getIndex(neighbor.column, neighbor.row);
+                // Here it assumes cost = 1 per move; modify if terrain has weights
+                int newDist = dist + 1;
+                if (newDist < distance[neighborIdx]) {
+                    distance[neighborIdx] = newDist;
+                    cameFrom[neighbor]    = current;
+                    queue.emplace(newDist, neighbor);
+                }
+            }
+        }
+    }
+
+    return {}; // No path found
+}
+
+std::optional<GridPosition> Grid::moveCharacter(const GridPosition& sourcePosition,
+                                                const GridPosition& destinationPosition) {
+    const std::vector<GridPosition> path = dijkstraPath(sourcePosition, destinationPosition);
+    if (path.empty()) {
+        return std::nullopt; // No path found
+    }
+
+    const CharacterType type = getCharacterFrom(sourcePosition.column, sourcePosition.row);
+    charactersGrid[getIndex(sourcePosition.column, sourcePosition.row)] = 0;
+    charactersGrid[getIndex(path[0].column, path[0].row)] = type;
+
+    return GridPosition{path[0].row, path[0].column};
 }
