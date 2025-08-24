@@ -11,17 +11,29 @@
 BuildingSelector::BuildingSelector(const std::initializer_list<BuildingType> inputElements) {
     using namespace Screen;
 
-    const auto [centerX, centerY] = Window::getBottomView().getCenter();
-    const auto [width, height]    = Window::getBottomView().getSize();
-    const float basePositionX     = centerX - width / 2;
-    const float basePositionY     = centerY - height / 2;
+    const auto  [centerX, centerY] = Window::getBottomView().getCenter();
+    const auto  [width, height]    = Window::getBottomView().getSize();
+    const float basePositionX      = centerX - width / 2;
+    const float basePositionY      = centerY - height / 2;
 
     const float elementSize = 0.7f * height;
     const float space       = 0.15f * height;
 
-    elements.reserve(inputElements.size());
-    buildings.reserve(inputElements.size());
+    elements.reserve(inputElements.size() + 1); // +1 for the road
+    buildings.reserve(inputElements.size() + 1);
     float shift = space;
+
+    // roads
+    {
+        sf::RectangleShape rect;
+        rect.setSize({elementSize, elementSize});
+        rect.setTexture(&getBuildingTexture(RoadBuilding));
+        rect.setPosition({basePositionX + shift, basePositionY + space});
+        elements.emplace_back(rect);
+        buildings.emplace_back(RoadBuilding);
+        shift += (elementSize + space);
+    }
+    // others
     for (const BuildingType building : inputElements) {
         sf::RectangleShape rect;
         rect.setSize({elementSize, elementSize});

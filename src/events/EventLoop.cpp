@@ -6,6 +6,7 @@
 
 #include "ScheduledEventQueue.h"
 #include "../board/buildings/events/CreateBuildingHandler.h"
+#include "../board/buildings/events/CreateRoadHandler.h"
 #include "../board/characters/events/CreateCharacterHandler.h"
 #include "../board/characters/events/GoForResourceHandler.h"
 #include "../board/characters/events/StoreResourceHandler.h"
@@ -28,6 +29,21 @@ EventLoop::EventLoop(
 
 void EventLoop::applyEvent(const std::shared_ptr<Event>& event) const {
     switch (event->getEventType()) {
+        case CreateRoad: {
+            // TODO: Make the price configurable
+            constexpr int price = 5;
+            if (economyState->canAfford(Gold, price)) {
+                const auto params  = event->getEventParams<CreateRoadParams>();
+                const bool success = CreateRoadHandler(params).invokeOn(event->getTarget());
+
+                if (success) {
+                    constexpr auto spendParams = SpendResourceParams{Gold, price};
+                    eventQueue->push(std::make_shared<Event>(economyState, SpendResource, spendParams));
+                }
+            }
+            break;
+        }
+
         case CreateBuilding: {
             // TODO: Make the price configurable
             constexpr int price = 50;

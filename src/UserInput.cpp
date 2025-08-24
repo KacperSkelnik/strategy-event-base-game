@@ -14,7 +14,8 @@ UserInput::UserInput(const std::shared_ptr<Board>&            board,
                      const std::shared_ptr<BuildingSelector>& buildingSelector): board(board),
     eventQueue(eventQueue),
     buildingSelector(buildingSelector),
-    screenCanBeDragged(false) {
+    screenCanBeDragged(false),
+    roadSelected(false) {
 }
 
 void UserInput::onClose() {
@@ -31,7 +32,14 @@ void UserInput::onMousePress(const sf::Event::MouseButtonPressed* event) {
             if (selectedBuilding) {
                 const auto params = CreateBuildingParams{selectedBuilding.value(), event->position};
                 eventQueue->push(std::make_shared<Event>(board, CreateBuilding, params));
-            } else if (const auto building = board->trySelectBuilding(event->position); building.has_value()) {
+            }
+
+            if (isRoadSelected()) {
+                const auto params = CreateRoadParams{event->position};
+                eventQueue->push(std::make_shared<Event>(board, CreateRoad, params));
+            }
+
+            if (const auto building = board->trySelectBuilding(event->position); building.has_value()) {
                 switch (building.value()->getType()) {
                     case School: {
                         const auto params = CreateCharacterParams{Serf, building.value()};
@@ -47,12 +55,17 @@ void UserInput::onMousePress(const sf::Event::MouseButtonPressed* event) {
 
         if (Window::isMouseOnBottomView(event->position)) {
             if (const std::optional<BuildingType> selected = buildingSelector->getSelected()) {
-                selectedBuilding = selected;
+                if (selected.value() == RoadBuilding) {
+                    roadSelected = true;
+                } else {
+                    selectedBuilding = selected;
+                }
             }
         }
     }
 
     if (event->button == sf::Mouse::Button::Right) {
+        roadSelected     = false;
         selectedBuilding = std::nullopt;
     }
 

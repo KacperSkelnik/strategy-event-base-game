@@ -1,6 +1,8 @@
 #pragma once
 
 enum EventType {
+    // Roads
+    CreateRoad,
     // Buildings
     CreateBuilding,
     // Characters

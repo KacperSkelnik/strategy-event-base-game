@@ -36,6 +36,8 @@ namespace Resource {
         sf::Texture gold;
         // characters
         sf::Texture serf;
+        // roads
+        sf::Texture road;
 
     public:
         Textures()  = default;
@@ -59,5 +61,7 @@ namespace Resource {
         static sf::Texture& getGold();
         // characters
         static sf::Texture& getSerf();
+        // roads
+        static sf::Texture& getRoad();
     };
 } // namespace Resource

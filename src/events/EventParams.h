@@ -8,6 +8,10 @@
 #include "SFML/System/Vector2.hpp"
 #include <variant>
 
+struct CreateRoadParams {
+    sf::Vector2i position;
+};
+
 struct CreateBuildingParams {
     BuildingType selectedBuilding;
     sf::Vector2i position;
@@ -31,13 +35,12 @@ struct StoreResourceParams {
     GridPosition storagePosition;
 };
 
-// clang-format off
 using EventParams = std::variant<
     std::monostate,
+    CreateRoadParams,
     CreateBuildingParams,
     SpendResourceParams,
     CreateCharacterParams,
     GoForResourceParams,
     StoreResourceParams
 >;
-// clang-format on

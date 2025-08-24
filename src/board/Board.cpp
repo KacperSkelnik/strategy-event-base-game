@@ -12,6 +12,10 @@ Board::Board(std::shared_ptr<Grid> grid): grid(std::move(grid)) {
     buildings.reserve(32);
 }
 
+bool Board::createRoad(const sf::Vector2i& position) const {
+    return grid->createRoad(position);
+}
+
 bool Board::createBuilding(const BuildingType buildingType, const sf::Vector2i& position) {
     const std::optional<GridPosition> maybePosition = grid->addBuilding(buildingType, position);
     if (maybePosition.has_value()) {
