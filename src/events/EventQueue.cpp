@@ -20,6 +20,10 @@ std::optional<std::shared_ptr<Event>> EventQueue::pop() {
     return event;
 }
 
+bool EventQueue::empty() const {
+    return events.empty();
+}
+
 void EventQueue::clear() {
     events.clear();
 }

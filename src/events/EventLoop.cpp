@@ -13,7 +13,6 @@
 #include "../economy/events/SpendResourceHandler.h"
 #include "../globals/Time.h"
 #include "../globals/Settings.h"
-#include <iostream>
 
 EventLoop::EventLoop(
     const std::shared_ptr<EventQueue>&          eventQueue,
@@ -119,17 +118,21 @@ void EventLoop::applyEvent(const std::shared_ptr<Event>& event) const {
     }
 }
 
-void EventLoop::runSingle() const {
-    const auto event          = eventQueue->pop();
-    const auto scheduledEvent = scheduledEventQueue->pop();
-    if (event.has_value()) {
-        applyEvent(event.value());
+void EventLoop::drain() const {
+
+    while (!eventQueue->empty()) {
+        const auto event = eventQueue->pop();
+        if (event.has_value()) {
+            applyEvent(event.value());
+        }
     }
-    if (scheduledEvent.has_value()) {
-        applyEvent(scheduledEvent.value());
+
+    for (const auto ready : scheduledEventQueue->popReady()) {
+        applyEvent(ready);
     }
 }
 
 void EventLoop::stop() const {
     eventQueue->clear();
+    scheduledEventQueue->clear();
 }

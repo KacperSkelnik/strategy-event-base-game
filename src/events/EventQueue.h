@@ -15,5 +15,6 @@ public:
 
     void                                                push(const std::shared_ptr<Event>& event);
     [[nodiscard]] std::optional<std::shared_ptr<Event>> pop();
+    bool                                                empty() const;
     void                                                clear();
 };

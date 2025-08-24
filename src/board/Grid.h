@@ -35,11 +35,17 @@ struct GridState {
 class Grid final {
 
 private:
-    float                      iX = 1;
-    float                      iY = 0.57;
-    float                      jX = -1;
-    float                      jY = 0.57;
-    unsigned                   cols, rows;
+    float    iX = 1;
+    float    iY = 0.57;
+    float    jX = -1;
+    float    jY = 0.57;
+    unsigned cols, rows;
+
+    mutable sf::Sprite environmentSprite;
+    mutable sf::Sprite previewSprite;
+    mutable sf::Sprite characterSprite;
+    mutable sf::Sprite buildingSprite;
+
     std::shared_ptr<GridState> state = nullptr;
 
     [[nodiscard]] int getIndex(unsigned col, unsigned row) const;

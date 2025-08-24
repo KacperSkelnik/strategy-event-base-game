@@ -9,7 +9,13 @@
 #include "../globals/Settings.h"
 #include <iostream>
 
-Grid::Grid(const unsigned cols, const unsigned rows): cols(cols), rows(rows) {
+Grid::Grid(const unsigned cols, const unsigned rows):
+    cols(cols),
+    rows(rows),
+    environmentSprite(sf::Sprite(Resource::Textures::getGround())),
+    previewSprite(sf::Sprite(Resource::Textures::getGround())),
+    characterSprite(sf::Sprite(Resource::Textures::getGround())),
+    buildingSprite(sf::Sprite(Resource::Textures::getGround())) {
 }
 
 int Grid::getIndex(const unsigned col, const unsigned row) const {
@@ -121,25 +127,32 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
 
             const EnvironmentType environment        = getEnvironmentFrom(i, j);
             const sf::Texture&    environmentTexture = getEnvironmentTexture(environment);
-            sf::Sprite            environmentSprite(environmentTexture);
+            environmentSprite.setTexture(environmentTexture);
+            environmentSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(environmentTexture.getSize())));
 
             // If hovering/selecting a building
             std::optional<sf::Sprite> buildingToBuildSprite = std::nullopt;
             if (maybeSelectedCol && maybeSelectedCol.value() == i &&
                 maybeSelectedRow && maybeSelectedRow.value() == j) {
+
                 position.y -= Variables::getSpriteHeight() * 0.1f;
+                environmentSprite.setPosition(position);
+
                 if (std::ranges::find(occupations, BuildingOccupation) != occupations.end()) {
                     environmentSprite.setTexture(Textures::getGround());
+                    Window::get().draw(environmentSprite);
                 } else {
                     const sf::Texture& texture = getBuildingTexture(maybeSelectedBuilding.value());
-                    buildingToBuildSprite.emplace(sf::Sprite(texture));
-                    buildingToBuildSprite->setPosition(getCenterPosition(texture, position));
+                    previewSprite.setTexture(texture);
+                    previewSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(texture.getSize())));
+                    previewSprite.setPosition(getCenterPosition(texture, position));
+                    Window::get().draw(environmentSprite);
+                    Window::get().draw(previewSprite);
                 }
+            } else {
+                environmentSprite.setPosition(position);
+                Window::get().draw(environmentSprite);
             }
-
-            // Draw environment
-            environmentSprite.setPosition(position);
-            Window::get().draw(environmentSprite);
 
             // Draw "ghost" building preview
             if (buildingToBuildSprite.has_value()) {
@@ -150,7 +163,8 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             if (std::ranges::find(occupations, CharacterOccupation) != occupations.end()) {
                 const CharacterType character = getCharacterFrom(i, j);
                 const sf::Texture&  texture   = getCharacterTexture(character);
-                sf::Sprite          characterSprite(texture);
+                characterSprite.setTexture(texture);
+                characterSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(texture.getSize())));
                 characterSprite.setPosition(getCenterPosition(texture, position));
                 Window::get().draw(characterSprite);
             }
@@ -159,7 +173,8 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             if (std::ranges::find(occupations, BuildingOccupation) != occupations.end()) {
                 const BuildingType building = getBuildingFrom(i, j);
                 const sf::Texture& texture  = getBuildingTexture(building);
-                sf::Sprite         buildingSprite(texture);
+                buildingSprite.setTexture(texture);
+                buildingSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(texture.getSize())));
                 buildingSprite.setPosition(getCenterPosition(texture, position));
                 Window::get().draw(buildingSprite);
             }
@@ -259,7 +274,7 @@ std::vector<GridPosition> Grid::dijkstraPath(const GridPosition& start, const Gr
             GridPosition              position = goal;
 
             const std::vector<OccupationType> occupations = checkOccupations(goal.column, goal.row);
-            if (occupations.size() == 2) {
+            if (occupations.size() >= 2) {
                 position = cameFrom[position];
             }
             while (position != start) {

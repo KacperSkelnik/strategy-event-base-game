@@ -78,7 +78,7 @@ void Game::draw() const {
 }
 
 void Game::update() {
-    eventLoop.runSingle();
+    eventLoop.drain();
     economyPanel.update();
     userInput.handleEvent();
 }
