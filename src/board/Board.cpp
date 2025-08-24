@@ -41,9 +41,9 @@ std::optional<std::shared_ptr<Building>> Board::trySelectBuilding(const sf::Vect
     return std::nullopt;
 }
 
-std::optional<std::shared_ptr<Character>> Board::produceCharacter(CharacterType                   characterType,
-                                                                  const std::shared_ptr<Building> school) {
-    const std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, school->getPosition());
+std::optional<std::shared_ptr<Character>> Board::produceCharacter(CharacterType                    characterType,
+                                                                  const std::shared_ptr<Building>& byBuilding) {
+    const std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, byBuilding->getPosition());
     if (maybePosition.has_value()) {
         auto character = std::make_shared<Character>(characterType, maybePosition.value());
         characters.push_back(character);

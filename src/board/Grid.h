@@ -54,9 +54,9 @@ private:
 
     [[nodiscard]] static sf::Vector2f getCenterPosition(const sf::Texture& texture, sf::Vector2f position);
 
-    [[nodiscard]] OccupationType            checkOccupation(unsigned col, unsigned row) const;
-    [[nodiscard]] std::vector<GridPosition> getNeighbors(const GridPosition& position) const;
-    [[nodiscard]] std::vector<GridPosition> dijkstraPath(const GridPosition& start, const GridPosition& goal) const;
+    [[nodiscard]] std::vector<OccupationType> checkOccupations(unsigned col, unsigned row) const;
+    [[nodiscard]] std::vector<GridPosition>   getNeighbors(const GridPosition& position) const;
+    [[nodiscard]] std::vector<GridPosition>   dijkstraPath(const GridPosition& start, const GridPosition& goal) const;
 
 public:
     Grid() = delete;
