@@ -19,6 +19,7 @@ Grid::Grid(const unsigned cols, const unsigned rows):
 }
 
 int Grid::getIndex(const unsigned col, const unsigned row) const {
+    assert(col < cols && row < rows && "Grid::getIndex: index out of range!");
     return col + row * cols;
 }
 
@@ -127,6 +128,10 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
 
             const EnvironmentType environment        = getEnvironmentFrom(i, j);
             const sf::Texture&    environmentTexture = getEnvironmentTexture(environment);
+            assert(
+                environmentTexture.getSize().x > 0 && environmentTexture.getSize().y > 0 &&
+                "Nieprawidłowa tekstura środowiska!"
+            );
             environmentSprite.setTexture(environmentTexture);
             environmentSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(environmentTexture.getSize())));
 
@@ -163,6 +168,7 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             if (std::ranges::find(occupations, CharacterOccupation) != occupations.end()) {
                 const CharacterType character = getCharacterFrom(i, j);
                 const sf::Texture&  texture   = getCharacterTexture(character);
+                assert(texture.getSize().x > 0 && texture.getSize().y > 0 && "Nieprawidłowa tekstura postaci!");
                 characterSprite.setTexture(texture);
                 characterSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(texture.getSize())));
                 characterSprite.setPosition(getCenterPosition(texture, position));
@@ -173,6 +179,7 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
             if (std::ranges::find(occupations, BuildingOccupation) != occupations.end()) {
                 const BuildingType building = getBuildingFrom(i, j);
                 const sf::Texture& texture  = getBuildingTexture(building);
+                assert(texture.getSize().x > 0 && texture.getSize().y > 0 && "Nieprawidłowa tekstura budynku!");
                 buildingSprite.setTexture(texture);
                 buildingSprite.setTextureRect(sf::IntRect({0, 0}, sf::Vector2i(texture.getSize())));
                 buildingSprite.setPosition(getCenterPosition(texture, position));

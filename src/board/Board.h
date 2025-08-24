@@ -21,7 +21,9 @@ public:
     [[nodiscard]] std::optional<std::shared_ptr<Building>> trySelectBuilding(const sf::Vector2i& mousePosition) const;
     [[nodiscard]] std::vector<std::shared_ptr<Building>> getBuildings() const { return buildings; }
     // characters
-    [[nodiscard]] std::optional<std::shared_ptr<Character>> produceCharacter(CharacterType             characterType,
-                                                                             const std::shared_ptr<Building>& byBuilding);
+    [[nodiscard]] std::optional<std::shared_ptr<Character>> produceCharacter(
+        CharacterType                    characterType,
+        const std::shared_ptr<Building>& byBuilding
+    );
     void moveCharacter(const std::shared_ptr<Character>& character, const GridPosition& destinationPosition) const;
 };

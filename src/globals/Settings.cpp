@@ -14,7 +14,7 @@ namespace Settings {
     void Variables::init() {
         assert(!s_variables_instance);
 
-        std::ifstream file("../config/game.json");
+        std::ifstream file("config/game.json");
         if (!file.is_open()) {
             throw std::runtime_error("Failed to open ../config/game.json");
         }

@@ -17,7 +17,7 @@ namespace Resource {
 
         s_fonts_instance = new Fonts();
 
-        if (!s_fonts_instance->regular.openFromFile("../assets/Prater Sans Regular.otf")) {
+        if (!s_fonts_instance->regular.openFromFile("assets/Prater Sans Regular.otf")) {
             throw std::runtime_error("Failed to load Prater Sans Regular.otf");
         }
     }
@@ -46,46 +46,46 @@ namespace Resource {
         s_textures_instance = new Textures();
 
         // environment
-        if (!s_textures_instance->grass.loadFromFile("../assets/textures/environment/grass.png")) {
+        if (!s_textures_instance->grass.loadFromFile("assets/textures/environment/grass.png")) {
             throw std::runtime_error("Failed to load grass.png");
         }
-        if (!s_textures_instance->ground.loadFromFile("../assets/textures/environment/ground.png")) {
+        if (!s_textures_instance->ground.loadFromFile("assets/textures/environment/ground.png")) {
             throw std::runtime_error("Failed to load ground.png");
         }
-        if (!s_textures_instance->goldRock.loadFromFile("../assets/textures/environment/gold.png")) {
+        if (!s_textures_instance->goldRock.loadFromFile("assets/textures/environment/gold.png")) {
             throw std::runtime_error("Failed to load gold.png");
         }
         // buildings
-        if (!s_textures_instance->farm.loadFromFile("../assets/textures/buildings/farm.png")) {
+        if (!s_textures_instance->farm.loadFromFile("assets/textures/buildings/farm.png")) {
             throw std::runtime_error("Failed to load farm.png");
         }
-        if (!s_textures_instance->goldMine.loadFromFile("../assets/textures/buildings/gold_mine.png")) {
+        if (!s_textures_instance->goldMine.loadFromFile("assets/textures/buildings/gold_mine.png")) {
             throw std::runtime_error("Failed to load gold_mine.png");
         }
-        if (!s_textures_instance->lumberjackHouse.loadFromFile("../assets/textures/buildings/lumberjack_house.png")) {
+        if (!s_textures_instance->lumberjackHouse.loadFromFile("assets/textures/buildings/lumberjack_house.png")) {
             throw std::runtime_error("Failed to load lumberjack_house.png");
         }
-        if (!s_textures_instance->quarry.loadFromFile("../assets/textures/buildings/quarry.png")) {
+        if (!s_textures_instance->quarry.loadFromFile("assets/textures/buildings/quarry.png")) {
             throw std::runtime_error("Failed to load quarry.png");
         }
-        if (!s_textures_instance->sawMill.loadFromFile("../assets/textures/buildings/saw_mill.png")) {
+        if (!s_textures_instance->sawMill.loadFromFile("assets/textures/buildings/saw_mill.png")) {
             throw std::runtime_error("Failed to load saw_mill.png");
         }
-        if (!s_textures_instance->school.loadFromFile("../assets/textures/buildings/school.png")) {
+        if (!s_textures_instance->school.loadFromFile("assets/textures/buildings/school.png")) {
             throw std::runtime_error("Failed to load school.png");
         }
-        if (!s_textures_instance->tower.loadFromFile("../assets/textures/buildings/tower.png")) {
+        if (!s_textures_instance->tower.loadFromFile("assets/textures/buildings/tower.png")) {
             throw std::runtime_error("Failed to load tower.png");
         }
-        if (!s_textures_instance->townHall.loadFromFile("../assets/textures/buildings/town_hall.png")) {
+        if (!s_textures_instance->townHall.loadFromFile("assets/textures/buildings/town_hall.png")) {
             throw std::runtime_error("Failed to load town_hall.png");
         }
         // economy
-        if (!s_textures_instance->gold.loadFromFile("../assets/textures/economy/gold.png")) {
+        if (!s_textures_instance->gold.loadFromFile("assets/textures/economy/gold.png")) {
             throw std::runtime_error("Failed to load gold.png");
         }
         // characters
-        if (!s_textures_instance->serf.loadFromFile("../assets/textures/characters/serf.png")) {
+        if (!s_textures_instance->serf.loadFromFile("assets/textures/characters/serf.png")) {
             throw std::runtime_error("Failed to load serf.png");
         }
     }
