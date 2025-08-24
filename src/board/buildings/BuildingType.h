@@ -8,14 +8,15 @@
 #include <optional>
 
 enum BuildingType {
-    TownHall        = 1,
-    School          = 2,
-    Farm            = 3,
-    GoldMine        = 4,
-    Quarry          = 5,
+    TownHall = 1,
+    School = 2,
+    Farm = 3,
+    GoldMine = 4,
+    Quarry = 5,
     LumberjackHouse = 6,
-    SawMill         = 7,
-    Tower           = 8,
+    SawMill = 7,
+    Tower = 8,
+    RoadBuilding = 9, // special type of building used for roads
 };
 
 inline sf::Texture& getBuildingTexture(const BuildingType type) {
@@ -38,6 +39,8 @@ inline sf::Texture& getBuildingTexture(const BuildingType type) {
             return Textures::getSawMill();
         case Tower:
             return Textures::getTower();
+        case RoadBuilding:
+            return Textures::getRoad();
         default:
             return Textures::getGround();
     }

@@ -84,7 +84,7 @@ sf::Vector2f Grid::getCenterPosition(const sf::Texture& texture, const sf::Vecto
 }
 
 // Implements Moore Neighbors
-std::vector<GridPosition> Grid::getNeighbors(const GridPosition& position) const {
+std::vector<GridPosition> Grid::getMooreNeighbors(const GridPosition& position) const {
     std::vector<GridPosition> neighbors;
     neighbors.reserve(8); // max number of neighbors
 
@@ -104,7 +104,28 @@ std::vector<GridPosition> Grid::getNeighbors(const GridPosition& position) const
     return neighbors;
 }
 
-void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const {
+std::vector<GridPosition> Grid::getVonNeumannNeighbors(const GridPosition& position) const {
+    std::vector<GridPosition> neighbors;
+    neighbors.reserve(4); // max number of neighbors
+
+    const std::vector<std::pair<int, int>> directions = {
+        {0, 1},  // Up
+        {1, 0},  // Right
+        {0, -1}, // Down
+        {-1, 0}  // Left
+    };
+
+    for (const auto& [dx, dy] : directions) {
+        const int nCol = position.column + dx;
+        const int nRow = position.row + dy;
+        if (nCol >= 0 && nCol < cols && nRow >= 0 && nRow < rows) {
+            neighbors.emplace_back(nRow, nCol);
+        }
+    }
+    return neighbors;
+}
+
+void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding, bool isRoadSelected) const {
     using namespace Screen;
     using namespace Settings;
     using namespace Resource;
@@ -113,7 +134,7 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
 
     std::optional<unsigned> maybeSelectedCol = std::nullopt;
     std::optional<unsigned> maybeSelectedRow = std::nullopt;
-    if (maybeSelectedBuilding) {
+    if (maybeSelectedBuilding || isRoadSelected) {
         const sf::Vector2i mousePosition = sf::Mouse::getPosition(Window::get());
         const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(mousePosition);
         const sf::Vector2u gridPosition  = getGridPosition(worldPosition.x, worldPosition.y);
@@ -141,6 +162,9 @@ void Grid::draw(const std::optional<BuildingType>& maybeSelectedBuilding) const 
 
                 if (std::ranges::find(occupations, BuildingOccupation) != occupations.end()) {
                     environmentSprite.setTexture(Textures::getGround());
+                    Window::get().draw(environmentSprite);
+                } else if (isRoadSelected) {
+                    environmentSprite.setTexture(Textures::getRoad());
                     Window::get().draw(environmentSprite);
                 } else {
                     const sf::Texture& texture = getBuildingTexture(maybeSelectedBuilding.value());
@@ -202,6 +226,21 @@ std::vector<OccupationType> Grid::checkOccupations(const unsigned col, const uns
     return occupations;
 }
 
+bool Grid::createRoad(const sf::Vector2i& position) const {
+    using namespace Screen;
+
+    Window::mainViewFocus();
+    const sf::Vector2f worldPosition = Window::get().mapPixelToCoords(position);
+    const auto         [col, row]    = getGridPosition(worldPosition.x, worldPosition.y);
+
+    const std::vector<OccupationType> occupations = checkOccupations(col, row);
+    if (occupations.empty()) {
+        state->environmentGrid[getIndex(col, row)] = Road;
+        return true;
+    }
+    return false;
+}
+
 std::optional<GridPosition> Grid::addBuilding(const BuildingType buildingType, const sf::Vector2i& position) const {
     using namespace Settings;
     using namespace Screen;
@@ -227,18 +266,18 @@ std::optional<sf::Sprite> Grid::getBuildingSprite(const GridPosition& position) 
     if (std::ranges::find(occupations, BuildingOccupation) != occupations.end()) {
         const BuildingType building = getBuildingFrom(position.column, position.row);
         const sf::Texture& texture  = getBuildingTexture(building);
-        sf::Sprite         buildingSprite(texture);
+        sf::Sprite         sprite(texture);
         const sf::Vector2f screenPosition = getScreenPosition(position.column, position.row);
-        buildingSprite.setPosition(getCenterPosition(texture, screenPosition));
+        sprite.setPosition(getCenterPosition(texture, screenPosition));
 
-        return buildingSprite;
+        return sprite;
     }
     return std::nullopt;
 }
 
 std::optional<GridPosition> Grid::addCharacter(const CharacterType characterType,
                                                const GridPosition& schoolPosition) const {
-    for (const GridPosition neighbor : getNeighbors(schoolPosition)) {
+    for (const GridPosition neighbor : getMooreNeighbors(schoolPosition)) {
         const std::vector<OccupationType> occupations = checkOccupations(neighbor.column, neighbor.row);
         if (occupations.empty()) {
             state->charactersGrid[getIndex(neighbor.column, neighbor.row)] = characterType;
@@ -291,12 +330,18 @@ std::vector<GridPosition> Grid::dijkstraPath(const GridPosition& start, const Gr
             continue;
         }
 
-        for (GridPosition neighbor : getNeighbors(current)) {
+        for (GridPosition neighbor : getVonNeumannNeighbors(current)) {
             const std::vector<OccupationType> occupations = checkOccupations(neighbor.column, neighbor.row);
             if (occupations.empty() || neighbor == goal) {
                 const int neighborIdx = getIndex(neighbor.column, neighbor.row);
                 // Here it assumes cost = 1 per move; modify if terrain has weights
-                int newDist = dist + 1;
+
+                int newDist;
+                if (getEnvironmentFrom(neighbor.column, neighbor.row) == Road) {
+                    newDist = dist + 1;
+                } else {
+                    newDist = dist + 100;
+                }
                 if (newDist < distance[neighborIdx]) {
                     distance[neighborIdx] = newDist;
                     cameFrom[neighbor]    = current;

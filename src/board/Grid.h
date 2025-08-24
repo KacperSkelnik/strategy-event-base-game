@@ -61,7 +61,8 @@ private:
     [[nodiscard]] static sf::Vector2f getCenterPosition(const sf::Texture& texture, sf::Vector2f position);
 
     [[nodiscard]] std::vector<OccupationType> checkOccupations(unsigned col, unsigned row) const;
-    [[nodiscard]] std::vector<GridPosition>   getNeighbors(const GridPosition& position) const;
+    [[nodiscard]] std::vector<GridPosition>   getMooreNeighbors(const GridPosition& position) const;
+    [[nodiscard]] std::vector<GridPosition>   getVonNeumannNeighbors(const GridPosition& position) const;
     [[nodiscard]] std::vector<GridPosition>   dijkstraPath(const GridPosition& start, const GridPosition& goal) const;
 
 public:
@@ -70,8 +71,10 @@ public:
     ~Grid() = default;
 
     void setState(const std::shared_ptr<GridState>& newState) { state = newState; };
-    void draw(const std::optional<BuildingType>& maybeSelectedBuilding) const;
+    void draw(const std::optional<BuildingType>& maybeSelectedBuilding, bool isRoadSelected) const;
 
+    // roads
+    [[nodiscard]] bool createRoad(const sf::Vector2i& position) const;
     // buildings
     [[nodiscard]] std::optional<GridPosition>
         addBuilding(BuildingType buildingType, const sf::Vector2i& position) const;

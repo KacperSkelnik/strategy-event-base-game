@@ -88,6 +88,10 @@ namespace Resource {
         if (!s_textures_instance->serf.loadFromFile("assets/textures/characters/serf.png")) {
             throw std::runtime_error("Failed to load serf.png");
         }
+        // roads
+        if (!s_textures_instance->road.loadFromFile("assets/textures/roads/road.png")) {
+            throw std::runtime_error("Failed to load road.png");
+        }
     }
 
     void Textures::shutDown() {
@@ -174,6 +178,12 @@ namespace Resource {
         assert(s_textures_instance);
 
         return s_textures_instance->serf;
+    }
+
+    sf::Texture& Textures::getRoad() {
+        assert(s_textures_instance);
+
+        return s_textures_instance->road;
     }
 
 } // namespace Resource

@@ -14,6 +14,7 @@ private:
     bool                              screenCanBeDragged;
 
     std::optional<BuildingType> selectedBuilding;
+    bool                        roadSelected;
     static void                 onClose();
     void                        onMousePress(const sf::Event::MouseButtonPressed* event);
     void                        onMouseRelease(const sf::Event::MouseButtonReleased* event);
@@ -28,4 +29,5 @@ public:
 
     void                        handleEvent();
     std::optional<BuildingType> getSelectedBuilding() const { return selectedBuilding; }
+    bool                        isRoadSelected() const { return roadSelected; }
 };

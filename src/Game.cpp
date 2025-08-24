@@ -69,7 +69,7 @@ void Game::draw() const {
     // Clear screen
     Window::get().clear(sf::Color::White);
 
-    grid->draw(userInput.getSelectedBuilding());
+    grid->draw(userInput.getSelectedBuilding(), userInput.isRoadSelected());
     buildingSelector->draw();
     economyPanel.draw();
 
