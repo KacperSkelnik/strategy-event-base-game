@@ -1,8 +1,7 @@
 #pragma once
 
 typedef enum OccupationType {
-    Free                = 0,
-    BuildingOccupation  = 1,
-    CharacterOccupation = 2,
-    Bound               = 3,
+    BuildingOccupation = 0,
+    CharacterOccupation = 1,
+    Bound = 2,
 } OccupationType;

@@ -14,13 +14,12 @@ class ScheduledEventQueue final {
 
 private:
     ScheduledStorage events;
-    std::mutex       mutex;
 
 public:
     ScheduledEventQueue();
     ~ScheduledEventQueue() = default;
 
-    void push(const std::shared_ptr<Event>& event, const sf::Time& runAt);
-    [[nodiscard]] std::optional<std::shared_ptr<Event>> pop();
-    void clear();
+    void                                              push(const std::shared_ptr<Event>& event, const sf::Time& runAt);
+    [[nodiscard]] std::vector<std::shared_ptr<Event>> popReady();
+    void                                              clear();
 };

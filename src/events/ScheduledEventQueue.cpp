@@ -11,30 +11,28 @@ ScheduledEventQueue::ScheduledEventQueue():
 }
 
 void ScheduledEventQueue::push(const std::shared_ptr<Event>& event, const sf::Time& runAt) {
-    std::lock_guard<std::mutex> lock(mutex);
     events[event->getTarget()] = ScheduledEvent{event, runAt};
 }
 
-std::optional<std::shared_ptr<Event>> ScheduledEventQueue::pop() {
+std::vector<std::shared_ptr<Event>> ScheduledEventQueue::popReady() {
     using namespace Time;
-    std::lock_guard<std::mutex> lock(mutex);
+
+    std::vector<std::shared_ptr<Event>> readyEvents;
     if (events.empty()) {
-        return std::nullopt;
+        return readyEvents;
     }
 
-    std::optional<std::shared_ptr<Event>> scheduledEvent = std::nullopt;
     for (const auto& [event, runAt] : events | std::views::values) {
         if (runAt <= Clock::now()) {
-            scheduledEvent = event;
-            break;
+            readyEvents.push_back(event);
         }
     }
 
-    if (scheduledEvent.has_value()) {
-        events.erase(scheduledEvent.value()->getTarget());
+    for (const auto ready : readyEvents) {
+        events.erase(ready->getTarget());
     }
 
-    return scheduledEvent;
+    return readyEvents;
 }
 
 void ScheduledEventQueue::clear() {

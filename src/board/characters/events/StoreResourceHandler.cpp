@@ -20,7 +20,6 @@ Event StoreResourceHandler::invoke(const std::shared_ptr<SerfCharacter> target) 
         if (resource.has_value() && amount.has_value()) {
             economyState->add(resource.value(), amount.value());
         }
-
         target->removeResource();
 
         return {target, Idle};

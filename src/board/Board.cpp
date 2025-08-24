@@ -6,7 +6,7 @@
 
 #include "../globals/Screen.h"
 #include "buildings/ResourceFactory.h"
-#include <iostream>
+#include "characters/SerfCharacter.h"
 
 Board::Board(std::shared_ptr<Grid> grid): grid(std::move(grid)) {
     buildings.reserve(32);
@@ -41,10 +41,15 @@ std::optional<std::shared_ptr<Building>> Board::trySelectBuilding(const sf::Vect
     return std::nullopt;
 }
 
-std::optional<std::shared_ptr<Character>> Board::produceCharacter(CharacterType                   characterType,
-                                                                  const std::shared_ptr<Building> school) {
-    const std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, school->getPosition());
+std::optional<std::shared_ptr<Character>> Board::produceCharacter(CharacterType                    characterType,
+                                                                  const std::shared_ptr<Building>& byBuilding) {
+    const std::optional<GridPosition> maybePosition = grid->addCharacter(characterType, byBuilding->getPosition());
     if (maybePosition.has_value()) {
+        if (characterType == Serf) {
+            auto character = std::make_shared<SerfCharacter>(characterType, maybePosition.value());
+            characters.push_back(character);
+            return character;
+        }
         auto character = std::make_shared<Character>(characterType, maybePosition.value());
         characters.push_back(character);
         return character;

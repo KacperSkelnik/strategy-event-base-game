@@ -23,6 +23,6 @@ public:
     );
     ~EventLoop() = default;
 
-    void runSingle() const;
+    void drain() const;
     void stop() const;
 };

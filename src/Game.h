@@ -1,5 +1,6 @@
 #pragma once
 
+#include "UserInput.h"
 #include "board/Board.h"
 #include "board/Grid.h"
 #include "economy/EconomyState.h"
@@ -15,34 +16,34 @@ private:
     std::shared_ptr<Grid>  grid;
     std::shared_ptr<Board> board;
 
-    // State
-    std::optional<BuildingType>   selectedBuilding;
+    // Economy
     std::shared_ptr<EconomyState> economyState;
 
     // Interface
-    BuildingSelector buildingSelector;
-    EconomyPanel     economyPanel;
-    bool             screenCanBeDragged;
+    std::shared_ptr<BuildingSelector> buildingSelector;
+    EconomyPanel                      economyPanel;
 
     // Events
     std::shared_ptr<EventQueue>          eventQueue;
     std::shared_ptr<ScheduledEventQueue> scheduledEventQueue;
     EventLoop                            eventLoop;
 
-    static void onClose();
-    void        onMousePress(const sf::Event::MouseButtonPressed* event);
-    void        onMouseRelease(const sf::Event::MouseButtonReleased* event);
-    void        onMouseScroll(const sf::Event::MouseWheelScrolled* event) const;
+    // Input
+    UserInput userInput;
 
-    void handleEvent(const sf::Event& event);
+    // Game State
+    std::array<std::shared_ptr<GridState>, 2> gridsBuffer;
+    int                                       frontIndex = 0;
+    int                                       backIndex  = 1;
+
     void draw() const;
-    void runEventLoop() const;
-
-    Game(std::initializer_list<BuildingType> buildingTypes);
+    void update();
 
 public:
     Game() = delete;
+    explicit Game(std::initializer_list<BuildingType> buildingTypes, const GridState& initialState);
     ~Game();
+
     static Game create(std::initializer_list<BuildingType> buildingTypes);
     void        run();
 };
