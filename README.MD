@@ -1,6 +1,6 @@
 ### Architecture
 
-- Event sourcing
+- Event-driven toy game inspired by ECS
 
 ### Buildings
 
