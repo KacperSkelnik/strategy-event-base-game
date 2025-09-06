@@ -8,5 +8,6 @@ ResourceFactory::ResourceFactory(const BuildingType type, const GridPosition pos
     Building(type, position, true),
     producedResource(getResourceProducedBy(type).value()),
     // TODO: make this configurable
-    productionAmount(1) {
+    productionAmount(1),
+    serfIsComing(false) {
 }

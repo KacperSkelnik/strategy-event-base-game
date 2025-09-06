@@ -382,7 +382,7 @@ GridPosition Grid::getClosestFreeSpace(const GridPosition& position) const {
         for (const GridPosition& neighbor : getMooreNeighbors(current)) {
             if (!visited.contains(neighbor)) {
 
-                const std::vector<OccupationType> occupations = checkOccupations(current.column, current.row);
+                const std::vector<OccupationType> occupations = checkOccupations(neighbor.column, neighbor.row);
                 if (occupations.empty()) {
                     return neighbor;
                 }
