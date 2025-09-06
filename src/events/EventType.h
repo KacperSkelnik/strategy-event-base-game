@@ -20,5 +20,7 @@ enum EventType {
     Eat,
     // Economy
     SpendResource,
-    ProduceResource
+    ProduceResource,
+    //
+    GoTo
 };

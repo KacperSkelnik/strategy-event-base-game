@@ -19,6 +19,6 @@ protected:
 public:
     explicit StoreResourceHandler(const std::shared_ptr<Board>&        board,
                                   const std::shared_ptr<EconomyState>& economyState,
-                                  const StoreResourceParams&           params);
+                                  StoreResourceParams                  params);
     ~StoreResourceHandler() override = default;
 };

@@ -4,6 +4,7 @@
 #include "../board/buildings/Building.h"
 #include "../board/characters/CharacterType.h"
 #include "../board/GridPosition.h"
+#include "../board/buildings/ResourceFactory.h"
 #include "../economy/EconomyResource.h"
 #include "SFML/System/Vector2.hpp"
 #include <variant>
@@ -28,11 +29,15 @@ struct CreateCharacterParams {
 };
 
 struct GoForResourceParams {
-    GridPosition resourcePosition;
+    std::shared_ptr<ResourceFactory> factory;
 };
 
 struct StoreResourceParams {
     GridPosition storagePosition;
+};
+
+struct GoToParams {
+    GridPosition destination;
 };
 
 using EventParams = std::variant<
@@ -42,5 +47,6 @@ using EventParams = std::variant<
     SpendResourceParams,
     CreateCharacterParams,
     GoForResourceParams,
-    StoreResourceParams
+    StoreResourceParams,
+    GoToParams
 >;

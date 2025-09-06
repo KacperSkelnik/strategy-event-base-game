@@ -7,7 +7,7 @@
 #include "../globals/Resource.h"
 #include "../globals/Screen.h"
 #include "../globals/Settings.h"
-#include <iostream>
+#include <unordered_set>
 
 Grid::Grid(const unsigned cols, const unsigned rows):
     cols(cols),
@@ -366,4 +366,32 @@ std::optional<GridPosition> Grid::moveCharacter(const GridPosition& sourcePositi
     state->charactersGrid[getIndex(path[0].column, path[0].row)] = type;
 
     return GridPosition{path[0].row, path[0].column};
+}
+
+GridPosition Grid::getClosestFreeSpace(const GridPosition& position) const {
+    std::queue<GridPosition>         queue;
+    std::unordered_set<GridPosition> visited;
+
+    queue.push(position);
+    visited.insert(position);
+
+    while (!queue.empty()) {
+        GridPosition current = queue.front();
+        queue.pop();
+
+        for (const GridPosition& neighbor : getMooreNeighbors(current)) {
+            if (!visited.contains(neighbor)) {
+
+                const std::vector<OccupationType> occupations = checkOccupations(neighbor.column, neighbor.row);
+                if (occupations.empty()) {
+                    return neighbor;
+                }
+
+                visited.insert(neighbor);
+                queue.push(neighbor);
+            }
+        }
+    }
+    // there is no space left on the grid!
+    return position;
 }

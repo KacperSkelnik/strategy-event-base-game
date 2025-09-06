@@ -9,6 +9,7 @@
 #include "../board/buildings/events/CreateRoadHandler.h"
 #include "../board/characters/events/CreateCharacterHandler.h"
 #include "../board/characters/events/GoForResourceHandler.h"
+#include "../board/characters/events/GoToHandler.h"
 #include "../board/characters/events/StoreResourceHandler.h"
 #include "../board/characters/events/IdleHandler.h"
 #include "../economy/events/SpendResourceHandler.h"
@@ -98,6 +99,18 @@ void EventLoop::applyEvent(const std::shared_ptr<Event>& event) const {
             using namespace Settings;
 
             auto           handler   = IdleHandler(board);
+            Event          nextEvent = handler.invokeOn(event->getTarget());
+            const sf::Time runAt     = Clock::now() + Variables::getClockTickDuration();
+            scheduledEventQueue->push(std::make_shared<Event>(nextEvent), runAt);
+            break;
+        }
+
+        case GoTo: {
+            using namespace Time;
+            using namespace Settings;
+
+            const auto     params    = event->getEventParams<GoToParams>();
+            auto           handler   = GoToHandler(board, params);
             Event          nextEvent = handler.invokeOn(event->getTarget());
             const sf::Time runAt     = Clock::now() + Variables::getClockTickDuration();
             scheduledEventQueue->push(std::make_shared<Event>(nextEvent), runAt);

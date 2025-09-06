@@ -28,4 +28,7 @@ public:
         const std::shared_ptr<Building>& byBuilding
     );
     void moveCharacter(const std::shared_ptr<Character>& character, const GridPosition& destinationPosition) const;
+    // generic
+    [[nodiscard]] unsigned int getDistance(const GridPosition& source, const GridPosition& destination) const;
+    [[nodiscard]] GridPosition getClosestFreeSpace(const GridPosition& position) const;
 };

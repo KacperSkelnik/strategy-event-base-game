@@ -4,17 +4,20 @@
 
 #include "GoForResourceHandler.h"
 
-GoForResourceHandler::GoForResourceHandler(const std::shared_ptr<Board>& board, const GoForResourceParams& params):
+#include <utility>
+
+GoForResourceHandler::GoForResourceHandler(const std::shared_ptr<Board>& board, GoForResourceParams params):
     board(board),
-    params(params) {
+    params(std::move(params)) {
 }
 
 Event GoForResourceHandler::invoke(const std::shared_ptr<SerfCharacter> target) {
-    if (params.resourcePosition == target->getPosition()) {
-        target->setResource(Gold, 10);
+    if (params.factory->getPosition() == target->getPosition()) {
+        target->setResource(params.factory->getProducedResource(), params.factory->getProductionAmount());
+        params.factory->setSerfIsComing(false);
         return {target, Idle};
     }
 
-    board->moveCharacter(target, params.resourcePosition);
-    return {target, GoForResource, params};
+    board->moveCharacter(target, params.factory->getPosition());
+    return {target, GoForResource, std::move(params)};
 }

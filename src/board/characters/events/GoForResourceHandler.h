@@ -6,7 +6,6 @@
 #include "../SerfCharacter.h"
 
 class GoForResourceHandler final: public EventHandler<SerfCharacter, Event> {
-
 private:
     std::shared_ptr<Board> board;
     GoForResourceParams    params;
@@ -15,6 +14,6 @@ protected:
     Event invoke(std::shared_ptr<SerfCharacter> target) override;
 
 public:
-    explicit GoForResourceHandler(const std::shared_ptr<Board>& board, const GoForResourceParams& params);
+    explicit GoForResourceHandler(const std::shared_ptr<Board>& board, GoForResourceParams params);
     ~GoForResourceHandler() override = default;
 };
