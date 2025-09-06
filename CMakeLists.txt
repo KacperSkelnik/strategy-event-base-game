@@ -85,6 +85,8 @@ add_executable(main src/main.cpp
         src/UserInput.h
         src/board/buildings/events/CreateRoadHandler.h
         src/board/buildings/events/CreateRoadHandler.cpp
+        src/board/characters/events/GoToHandler.cpp
+        src/board/characters/events/GoToHandler.h
 )
 
 target_compile_features(main PRIVATE cxx_std_17)

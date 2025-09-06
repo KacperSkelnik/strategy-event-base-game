@@ -63,7 +63,6 @@ private:
     [[nodiscard]] std::vector<OccupationType> checkOccupations(unsigned col, unsigned row) const;
     [[nodiscard]] std::vector<GridPosition>   getMooreNeighbors(const GridPosition& position) const;
     [[nodiscard]] std::vector<GridPosition>   getVonNeumannNeighbors(const GridPosition& position) const;
-    [[nodiscard]] std::vector<GridPosition>   dijkstraPath(const GridPosition& start, const GridPosition& goal) const;
 
 public:
     Grid() = delete;
@@ -84,4 +83,7 @@ public:
                                                            const GridPosition& schoolPosition) const;
     [[nodiscard]] std::optional<GridPosition> moveCharacter(const GridPosition& sourcePosition,
                                                             const GridPosition& destinationPosition) const;
+    // generic
+    [[nodiscard]] std::vector<GridPosition> dijkstraPath(const GridPosition& start, const GridPosition& goal) const;
+    [[nodiscard]] GridPosition              getClosestFreeSpace(const GridPosition& position) const;
 };

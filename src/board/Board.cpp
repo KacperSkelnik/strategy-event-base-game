@@ -67,3 +67,12 @@ void Board::moveCharacter(const std::shared_ptr<Character>& character, const Gri
         character->setPosition(newPosition.value());
     }
 }
+
+unsigned int Board::getDistance(const GridPosition& source, const GridPosition& destination) const {
+    const std::vector<GridPosition> path = grid->dijkstraPath(source, destination);
+    return path.size();
+}
+
+GridPosition Board::getClosestFreeSpace(const GridPosition& position) const {
+    return grid->getClosestFreeSpace(position);
+}

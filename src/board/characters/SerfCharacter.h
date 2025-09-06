@@ -22,7 +22,7 @@ public:
         amount.reset();
     }
 
-    bool                           carriesResource() const { return (resource.has_value() && amount.has_value()); }
-    std::optional<EconomyResource> getResource() const { return resource; }
-    std::optional<int>             getAmount() const { return amount; }
+    [[nodiscard]] bool carriesResource() const { return (resource.has_value() && amount.has_value()); }
+    [[nodiscard]] std::optional<EconomyResource> getResource() const { return resource; }
+    [[nodiscard]] std::optional<int> getAmount() const { return amount; }
 };

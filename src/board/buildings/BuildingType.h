@@ -55,7 +55,7 @@ inline std::optional<EnvironmentType> getRequiredEnvironment(const BuildingType 
     }
 }
 
-inline std::optional<EconomyResource> getProducedResource(const BuildingType type) {
+inline std::optional<EconomyResource> getResourceProducedBy(const BuildingType type) {
     switch (type) {
         case GoldMine:
             return Gold;
